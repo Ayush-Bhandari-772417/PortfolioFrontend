@@ -11,7 +11,7 @@ import ContactSection from '@/components/portfolioSections/ContactSection';
 import { getProfile, getSettings, getSEORobots } from '@/lib/data';
 import type { Metadata } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();

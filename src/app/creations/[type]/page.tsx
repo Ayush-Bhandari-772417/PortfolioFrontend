@@ -5,7 +5,7 @@ import CreationCard from '@/components/CreationCard';
 import PageHeader from '@/components/PageHeader';
 import { BookOpen, Sparkles, FileText, Newspaper } from 'lucide-react';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const validTypes = ['blog', 'poem', 'story', 'article'] as const;
 type CreationType = typeof validTypes[number];

@@ -5,7 +5,7 @@ import { getCreationBySlug, getCreations, getSettings, getSEORobots, getDisplayL
 import { Creation } from '@/types';
 import CreationDetailClient from '@/components/CreationDetailClient';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const validTypes = ['blog', 'poem', 'story', 'article'] as const;
 type CreationType = typeof validTypes[number];
@@ -15,7 +15,7 @@ async function getCategoryName(categoryId: string | null): Promise<string | null
   if (!categoryId) return null;
   
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/public'}/categories/${categoryId}/`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/`, {
       next: { revalidate: 3600 }
     });
     

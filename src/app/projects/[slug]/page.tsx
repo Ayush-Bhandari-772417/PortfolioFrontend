@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { getProjectBySlug, getProjects, getSettings, getSEORobots, getDisplayLimit } from '@/lib/data';
 import ProjectDetailClient from '@/components/ProjectDetailClient';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 type Props = {
   params: Promise<{ slug: string }>;

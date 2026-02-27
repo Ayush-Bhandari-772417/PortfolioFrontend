@@ -1,7 +1,7 @@
 // frontend2\src\lib\data.ts
 import { Project, Profile, Category, AllSettings, Setting, SEOPageSetting, SitemapSetting, DisplaySetting, Creation, Service, Skill, SubSkill, Experience, Qualification } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/public';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function fetchAPI(endpoint: string) {
   const url = `${API_BASE_URL}${endpoint}`;

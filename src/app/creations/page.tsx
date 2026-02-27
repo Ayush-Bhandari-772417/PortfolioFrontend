@@ -6,7 +6,7 @@ import PageHeader from '@/components/PageHeader';
 import Link from 'next/link';
 import { BookOpen, Sparkles, FileText, Newspaper } from 'lucide-react';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const creationTypes = [
   { type: 'blog', label: 'Blog Posts', icon: Newspaper, color: 'from-blue-500 to-cyan-500' },
