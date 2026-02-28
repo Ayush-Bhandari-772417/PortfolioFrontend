@@ -10,13 +10,15 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  const projects = await getProjects();
+export const dynamic = "force-dynamic";
+
+// export async function generateStaticParams() {
+//   const projects = await getProjects();
   
-  return projects.map(project => ({
-    slug: project.slug,
-  }));
-}
+//   return projects.map(project => ({
+//     slug: project.slug,
+//   }));
+// }
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }

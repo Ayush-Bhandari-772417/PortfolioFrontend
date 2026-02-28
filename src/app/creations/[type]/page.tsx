@@ -17,9 +17,11 @@ const typeConfig = {
   article: { label: 'Articles', icon: FileText, color: 'from-green-500 to-emerald-500' },
 };
 
-export async function generateStaticParams() {
-  return validTypes.map(type => ({ type }));
-}
+export const dynamic = "force-dynamic";
+
+// export async function generateStaticParams() {
+//   return validTypes.map(type => ({ type }));
+// }
 
 export async function generateMetadata({ 
   params 

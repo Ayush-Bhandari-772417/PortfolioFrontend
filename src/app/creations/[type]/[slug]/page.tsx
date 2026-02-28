@@ -10,6 +10,8 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const validTypes = ['blog', 'poem', 'story', 'article'] as const;
 type CreationType = typeof validTypes[number];
 
+export const dynamic = "force-dynamic";
+
 // Helper to fetch category name
 async function getCategoryName(categoryId: string | null): Promise<string | null> {
   if (!categoryId) return null;
@@ -65,16 +67,16 @@ async function getRelatedCreations(
   return related.slice(0, limit);
 }
 
-export async function generateStaticParams() {
-  const allCreations = await Promise.all(
-    validTypes.map(type => getCreations({ type }))
-  );
+// export async function generateStaticParams() {
+//   const allCreations = await Promise.all(
+//     validTypes.map(type => getCreations({ type }))
+//   );
   
-  return allCreations.flat().map(creation => ({
-    type: creation.type,
-    slug: creation.slug,
-  }));
-}
+//   return allCreations.flat().map(creation => ({
+//     type: creation.type,
+//     slug: creation.slug,
+//   }));
+// }
 
 export async function generateMetadata({ 
   params 
