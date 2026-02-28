@@ -10,7 +10,7 @@ import GoogleAnalytics from '@/components/GoogleAnalytics';
 import ScrollDepth from '@/components/ScrollDepth';
 import EngagementTime from '@/components/EngagementTime';
 import RecaptchaScript from '@/components/RecaptchaScript';
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),

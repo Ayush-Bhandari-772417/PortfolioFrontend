@@ -5,6 +5,8 @@ import ProjectCard from '@/components/ProjectCard';
 import PageHeader from '@/components/PageHeader';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();

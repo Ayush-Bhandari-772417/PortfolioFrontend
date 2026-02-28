@@ -3,16 +3,25 @@ import { Project, Profile, Category, AllSettings, Setting, SEOPageSetting, Sitem
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// async function fetchAPI(endpoint: string) {
+//   const url = `${API_BASE_URL}${endpoint}`;
+
+//   const response = await fetch(url, {
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     cache: 'force-cache',
+//     next: { revalidate: 3600 },
+//   });
+
+//   if (!response.ok) return null;
+//   const data = await response.json();
+//   return data.results ?? data;
+// }
+
 async function fetchAPI(endpoint: string) {
   const url = `${API_BASE_URL}${endpoint}`;
-
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'force-cache',
-    next: { revalidate: 3600 },
-  });
+  const response = await fetch(url);
 
   if (!response.ok) return null;
   const data = await response.json();

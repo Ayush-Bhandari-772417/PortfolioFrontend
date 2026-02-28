@@ -17,6 +17,7 @@ const typeConfig = {
   article: { label: 'Articles', icon: FileText, color: 'from-green-500 to-emerald-500' },
 };
 
+export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 // export async function generateStaticParams() {

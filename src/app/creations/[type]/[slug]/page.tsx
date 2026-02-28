@@ -10,6 +10,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const validTypes = ['blog', 'poem', 'story', 'article'] as const;
 type CreationType = typeof validTypes[number];
 
+export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 // Helper to fetch category name
