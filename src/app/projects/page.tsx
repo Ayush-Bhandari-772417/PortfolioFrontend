@@ -1,15 +1,17 @@
 // frontend2\src\app\projects\page.tsx
 import { Metadata } from 'next';
-import { getProjects, getSettings, getCategories, getSEORobots } from '@/lib/data';
+import { getProjects, getBootstrap, getSEORobots } from '@/lib/data';
 import ProjectCard from '@/components/ProjectCard';
 import PageHeader from '@/components/PageHeader';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+  const bootstrap = await getBootstrap();
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   
   const pageTitle = settings.settings.projects_page_title || 'Projects';
   const pageDescription = settings.settings.projects_page_description || 
@@ -47,10 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ProjectsPage() {
-  const [projects, settings, categories] = await Promise.all([
+  const bootstrap = await getBootstrap();
+  const [projects, settings] = await Promise.all([
     getProjects(),
-    getSettings(),
-    getCategories(),
+    normalizeSettingsFromBootstrap(bootstrap)
   ]);
 
   const featuredProjects = projects.filter(p => p.featured);

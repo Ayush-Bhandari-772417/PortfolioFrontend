@@ -1,9 +1,10 @@
 // frontend2\src\app\creations\[type]\[slug]\page.tsx
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCreationBySlug, getCreations, getSettings, getSEORobots, getDisplayLimit } from '@/lib/data';
+import { getCreationBySlug, getCreations, getBootstrap, getSEORobots, getDisplayLimit } from '@/lib/data';
 import { Creation } from '@/types';
 import CreationDetailClient from '@/components/CreationDetailClient';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -68,26 +69,16 @@ async function getRelatedCreations(
   return related.slice(0, limit);
 }
 
-// export async function generateStaticParams() {
-//   const allCreations = await Promise.all(
-//     validTypes.map(type => getCreations({ type }))
-//   );
-  
-//   return allCreations.flat().map(creation => ({
-//     type: creation.type,
-//     slug: creation.slug,
-//   }));
-// }
-
 export async function generateMetadata({ 
   params 
 }: { 
   params: Promise<{ type: string; slug: string }> 
 }): Promise<Metadata> {
+  const bootstrap = await getBootstrap();
   const { type, slug } = await params;
   const [creation, settings] = await Promise.all([
     getCreationBySlug(slug, type),
-    getSettings()
+    normalizeSettingsFromBootstrap(bootstrap)
   ]);
   
   if (!creation) return { title: 'Creation Not Found' };
@@ -165,9 +156,10 @@ export default async function CreationDetailPage({
     notFound();
   }
 
+  const bootstrap = await getBootstrap();
   const [creation, settings] = await Promise.all([
     getCreationBySlug(slug, type),
-    getSettings()
+    normalizeSettingsFromBootstrap(bootstrap)
   ]);
   
   if (!creation) notFound();

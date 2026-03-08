@@ -1,10 +1,11 @@
 // frontend2\src\app\creations\page.tsx
 import { Metadata } from 'next';
-import { getCreations, getSettings, getSEORobots, getDisplayLimit } from '@/lib/data';
+import { getCreations, getBootstrap, getSEORobots, getDisplayLimit } from '@/lib/data';
 import CreationCard from '@/components/CreationCard';
 import PageHeader from '@/components/PageHeader';
 import Link from 'next/link';
 import { BookOpen, Sparkles, FileText, Newspaper } from 'lucide-react';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -19,7 +20,8 @@ export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+  const bootstrap = await getBootstrap();
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   
   const pageTitle = settings.settings.creations_page_title || 'Creations';
   const pageDescription = settings.settings.creations_page_description || 
@@ -57,7 +59,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CreationsPage() {
-  const settings = await getSettings();
+  const bootstrap = await getBootstrap();
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   
   const previewLimit = getDisplayLimit(settings, 'creations_overview', 'items', 4);
 

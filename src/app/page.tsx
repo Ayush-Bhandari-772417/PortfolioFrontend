@@ -1,30 +1,43 @@
 // frontend2\src\app\page.tsx
 import Hero from '@/components/portfolioSections/Hero';
 import About from '@/components/portfolioSections/About';
-import SkillsSection from '@/components/portfolioSections/SkillsSection';
-import QualificationsSection from '@/components/portfolioSections/QualificationsSection';
+import SkillsClient from '@/components/SkillsClient';
+import QualificationsClient from '@/components/QualificationsClient';
 import ExperienceSection from '@/components/portfolioSections/ExperienceSection';
-import ServicesSection from '@/components/portfolioSections/ServicesSection';
+import ServicesClient from '@/components/ServicesClient';
 import FeaturedProjectsSection from '@/components/portfolioSections/FeaturedProjectsSection';
 import CreationsPreviewSection from '@/components/portfolioSections/CreationsPreviewSection';
 import ContactSection from '@/components/portfolioSections/ContactSection';
-import { getProfile, getSettings, getSEORobots } from '@/lib/data';
+import { getBootstrap } from "@/lib/data";
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import type { Metadata } from 'next';
+import {getDisplayLimit} from '@/lib/data';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
-  const profile = await getProfile();
+  const bootstrap = await getBootstrap();
+
+  const {
+    profile,
+    services,
+    skills,
+    experience,
+    qualifications,
+    social_media,
+  } = bootstrap;
+
+  // 🔥 normalize settings here
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   
   const pageTitle = settings.settings.home_page_title || 'Home';
   const siteTitle = settings.settings.site_title || 'Ayush Bhandari | Portfolio';
   const pageDescription = settings.settings.home_page_description || 
     `Welcome to ${profile?.name || 'Ayush Bhandari'}'s portfolio showcasing projects and creations.`;
   const ogImage = settings.settings.home_og_image || '/logo.png';
-  const robots = getSEORobots(settings, 'home');
+  // const robots = getSEORobots(settings, 'home');
   
   const keywords = [
     ...(profile?.keywords || []),
@@ -58,7 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [ogImage],
       creator: settings.settings.twitter_handle || '@AyushBhandari',
     },
-    robots,
+    // robots,
     other: {
       'og:locale': settings.settings.site_language || 'en_US',
       'article:author': profile?.name || settings.settings.author_name || 'Ayush Bhandari',
@@ -67,8 +80,19 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const profile = await getProfile();
-  const settings = await getSettings();
+  const bootstrap = await getBootstrap();
+  const {
+    profile,
+    services,
+    skills,
+    experience,
+    qualifications,
+    social_media,
+  } = bootstrap;
+
+  // 🔥 normalize settings here
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
+
   const showSkills = settings.settings.home_show_skills !== false;
   const showQualifications = settings.settings.home_show_qualifications !== false;
   const showExperience = settings.settings.home_show_experience !== false;
@@ -103,13 +127,13 @@ export default async function HomePage() {
       <main className="min-h-screen">
         <Hero profile={profile} settings={settings} />
         <About profile={profile} settings={settings} />
-        {showSkills && <SkillsSection settings={settings} />}
-        {showQualifications && <QualificationsSection settings={settings} />}
-        {showExperience && <ExperienceSection settings={settings} />}
-        {showServices && <ServicesSection settings={settings} />}
+        {showSkills && <SkillsClient skills={skills.slice(0, getDisplayLimit(settings, 'home', 'skills', 10))} />}
+        {showQualifications && <QualificationsClient qualifications={qualifications.slice(0, getDisplayLimit(settings, 'home', 'qualifications', 10))} />}
+        {showExperience && <ExperienceSection experiences={experience.slice(0, getDisplayLimit(settings, 'home', 'experiences', 3))} />}
+        {showServices && <ServicesClient services={services.slice(0, getDisplayLimit(settings, 'home', 'services', 6))} />}
         {showProjects && <FeaturedProjectsSection settings={settings} />}
         {showCreations && <CreationsPreviewSection settings={settings} />}
-        {showContact && <ContactSection />}
+        {showContact && <ContactSection settings={settings} />}
       </main>
     </>
   );

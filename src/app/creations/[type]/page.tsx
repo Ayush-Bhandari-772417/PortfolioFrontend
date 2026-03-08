@@ -1,9 +1,10 @@
 // frontend2\src\app\creations\[type]\page.tsx
 import { Metadata } from 'next';
-import { getCreations, getSettings, getSEORobots } from '@/lib/data';
+import { getCreations, getBootstrap, getSEORobots } from '@/lib/data';
 import CreationCard from '@/components/CreationCard';
 import PageHeader from '@/components/PageHeader';
 import { BookOpen, Sparkles, FileText, Newspaper } from 'lucide-react';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -20,10 +21,6 @@ const typeConfig = {
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
-// export async function generateStaticParams() {
-//   return validTypes.map(type => ({ type }));
-// }
-
 export async function generateMetadata({ 
   params 
 }: { 
@@ -34,8 +31,9 @@ export async function generateMetadata({
   if (!validTypes.includes(type as CreationType)) {
     return { title: 'Not Found' };
   }
-
-  const settings = await getSettings();
+  
+  const bootstrap = await getBootstrap();
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   const config = typeConfig[type as CreationType];
   
   const pageTitle = `${config.label} - Creations`;

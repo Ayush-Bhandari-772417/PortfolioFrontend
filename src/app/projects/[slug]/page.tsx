@@ -1,8 +1,9 @@
 // frontend2\src\app\projects\[slug]\page.tsx
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProjectBySlug, getProjects, getSettings, getSEORobots, getDisplayLimit } from '@/lib/data';
+import { getProjectBySlug, getProjects, getBootstrap, getSEORobots, getDisplayLimit } from '@/lib/data';
 import ProjectDetailClient from '@/components/ProjectDetailClient';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -13,22 +14,15 @@ type Props = {
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
-// export async function generateStaticParams() {
-//   const projects = await getProjects();
-  
-//   return projects.map(project => ({
-//     slug: project.slug,
-//   }));
-// }
-
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> { 
+  const bootstrap = await getBootstrap();
   const { slug } = await params;
   console.log('Generating metadata for project detail page', slug);
   const [project, settings] = await Promise.all([
     getProjectBySlug(slug),
-    getSettings()
+    normalizeSettingsFromBootstrap(bootstrap)
   ]);
   
   if (!project) return { title: 'Project Not Found' };
@@ -79,11 +73,11 @@ export default async function ProjectDetailPage({
 }: { 
   params: Promise<{ slug: string }> 
 }) {
-  // ({ params }: Props) {
+  const bootstrap = await getBootstrap();
   const { slug } = await params;
   const [project, settings] = await Promise.all([
     getProjectBySlug(slug),
-    getSettings()
+    normalizeSettingsFromBootstrap(bootstrap)
   ]);
 
   if (!project) notFound();
