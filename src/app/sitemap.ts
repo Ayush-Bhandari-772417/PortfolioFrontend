@@ -1,11 +1,18 @@
 // frontend2\src\app\sitemap.ts
 import { MetadataRoute } from 'next';
-import { getSettings, getProjects, getCreations } from '@/lib/data';
+import { getBootstrap, getProjects, getCreations } from '@/lib/data';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
+const safeDate = (value?: string | null) => {
+  const date = new Date(value || "");
+  return isNaN(date.getTime()) ? new Date() : date;
+};
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const settings = await getSettings();
+  const bootstrap = await getBootstrap();
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   const sitemapSettings = settings.sitemap;
 
   // Helper to check if page should be included
@@ -52,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter(project => shouldInclude('project-detail'))
     .map(project => ({
       url: `${baseUrl}/projects/${project.slug}`,
-      lastModified: new Date(project.updated_at),
+      lastModified: safeDate(project.updated_at),
       changeFrequency: 'monthly' as any,
       priority: project.featured ? 0.9 : 0.7,
     }));
@@ -90,7 +97,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
     .map(creation => ({
       url: `${baseUrl}/creations/${creation.type}/${creation.slug}`,
-      lastModified: new Date(creation.updated_date),
+      lastModified: safeDate(creation.updated_at),
       ...getConfig(`${creation.type}-detail`),
     }));
 

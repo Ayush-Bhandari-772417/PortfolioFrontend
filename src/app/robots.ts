@@ -1,11 +1,13 @@
 // frontend2\src\app\robots.ts
 import { MetadataRoute } from 'next';
-import { getSettings } from '@/lib/data';
+import { getBootstrap } from '@/lib/data';
+import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
-  const settings = await getSettings();
+  const bootstrap = await getBootstrap();
+  const settings = normalizeSettingsFromBootstrap(bootstrap);
   
   // Get SEO settings for different page types
   const homeIndexed = settings.seo.home?.index !== false;
