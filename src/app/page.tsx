@@ -8,75 +8,34 @@ import ServicesClient from '@/components/ServicesClient';
 import FeaturedProjectsSection from '@/components/portfolioSections/FeaturedProjectsSection';
 import CreationsPreviewSection from '@/components/portfolioSections/CreationsPreviewSection';
 import ContactSection from '@/components/portfolioSections/ContactSection';
-import { getBootstrap } from "@/lib/data";
+import { getBootstrap, getDisplayLimit } from "@/lib/data";
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import type { Metadata } from 'next';
-import {getDisplayLimit} from '@/lib/data';
+import { buildMetadata } from "@/lib/seo/metadata";
+import { homePageJsonLd } from "@/lib/seo/jsonld";
+import { websiteJsonLd } from '@/lib/seo/website';
+import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
+import { speakableJsonLd } from '@/lib/seo/speakable';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const bootstrap = await getBootstrap();
-
-  const {
-    profile,
-    services,
-    skills,
-    experience,
-    qualifications,
-    social_media,
-  } = bootstrap;
-
-  // 🔥 normalize settings here
   const settings = normalizeSettingsFromBootstrap(bootstrap);
-  
-  const pageTitle = settings.settings.home_page_title || 'Home';
-  const siteTitle = settings.settings.site_title || 'Ayush Bhandari | Portfolio';
-  const pageDescription = settings.settings.home_page_description || 
-    `Welcome to ${profile?.name || 'Ayush Bhandari'}'s portfolio showcasing projects and creations.`;
-  const ogImage = settings.settings.home_og_image || '/logo.png';
-  // const robots = getSEORobots(settings, 'home');
-  
-  const keywords = [
-    ...(profile?.keywords || []),
-    ...(settings.settings.home_page_keywords?.split(',').map((k: string) => k.trim()) || [])
-  ].filter(Boolean);
+  const profile = bootstrap.profile;
 
-  return {
-    title: pageTitle,
-    description: pageDescription,
-    keywords: keywords.join(', '),
-    alternates: { 
-      canonical: baseUrl 
-    },
-    openGraph: {
-      type: 'website',
-      url: baseUrl,
-      title: settings.settings.home_og_title || siteTitle,
-      description: settings.settings.home_og_description || pageDescription,
-      images: [{ 
-        url: ogImage, 
-        width: 1200, 
-        height: 630, 
-        alt: settings.settings.home_og_image_alt || 'Ayush Portfolio' 
-      }],
-      siteName: settings.settings.site_name || 'Ayush Bhandari',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: settings.settings.home_twitter_title || siteTitle,
-      description: settings.settings.home_twitter_description || pageDescription,
-      images: [ogImage],
-      creator: settings.settings.twitter_handle || '@AyushBhandari',
-    },
-    // robots,
-    other: {
-      'og:locale': settings.settings.site_language || 'en_US',
-      'article:author': profile?.name || settings.settings.author_name || 'Ayush Bhandari',
-    },
-  };
+  return buildMetadata({
+    settings: settings,
+    page: "homepage",
+    title: settings.settings.home_page_title,
+    description: settings.settings.home_page_description,
+    path: "/",
+    image: profile?.profile_image_url,
+    publishedTime: profile?.created_at,
+    modifiedTime: profile?.updated_at,
+    keywords: profile?.keywords,
+  });
 }
 
 export default async function HomePage() {
@@ -106,21 +65,12 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Person',
-            name: profile?.name || settings.settings.author_name || 'Ayush Bhandari',
-            jobTitle: profile?.tagline || 'Software Engineer',
-            description: profile?.short_intro || profile?.headline,
-            image: profile?.profile_image_url,
-            url: baseUrl,
-            sameAs: [
-              settings.settings.github_url,
-              settings.settings.linkedin_url,
-              settings.settings.twitter_url,
-            ].filter(Boolean),
-            knowsAbout: profile?.keywords || [],
-          }),
+          __html: JSON.stringify([
+            homePageJsonLd(profile, settings),
+            websiteJsonLd(),
+            breadcrumbsJsonLd([]),
+            speakableJsonLd(),
+          ]),
         }}
       />
 
@@ -138,3 +88,87 @@ export default async function HomePage() {
     </>
   );
 }
+
+// export async function generateMetadata(): Promise<Metadata> {
+//   const bootstrap = await getBootstrap();
+
+//   const {
+//     profile,
+//     services,
+//     skills,
+//     experience,
+//     qualifications,
+//     social_media,
+//   } = bootstrap;
+
+//   // 🔥 normalize settings here
+//   const settings = normalizeSettingsFromBootstrap(bootstrap);
+  
+//   const pageTitle = settings.settings.home_page_title || 'Home';
+//   const siteTitle = settings.settings.site_title || 'Ayush Bhandari | Portfolio';
+//   const pageDescription = settings.settings.home_page_description || 
+//     `Welcome to ${profile?.name || 'Ayush Bhandari'}'s portfolio showcasing projects and creations.`;
+//   const ogImage = settings.settings.home_og_image || '/logo.png';
+//   const robots = getSEORobots(settings, 'home');
+  
+//   const keywords = [
+//     ...(profile?.keywords || []),
+//     ...(settings.settings.home_page_keywords?.split(',').map((k: string) => k.trim()) || [])
+//   ].filter(Boolean);
+
+//   return {
+//     title: pageTitle,
+//     description: pageDescription,
+//     keywords: keywords.join(', '),
+//     alternates: { 
+//       canonical: baseUrl 
+//     },
+//     openGraph: {
+//       type: 'website',
+//       url: baseUrl,
+//       title: settings.settings.home_og_title || siteTitle,
+//       description: settings.settings.home_og_description || pageDescription,
+//       images: [{ 
+//         url: ogImage, 
+//         width: 1200, 
+//         height: 630, 
+//         alt: settings.settings.home_og_image_alt || 'Ayush Portfolio' 
+//       }],
+//       siteName: settings.settings.site_name || 'Ayush Bhandari',
+//     },
+//     twitter: {
+//       card: 'summary_large_image',
+//       title: settings.settings.home_twitter_title || siteTitle,
+//       description: settings.settings.home_twitter_description || pageDescription,
+//       images: [ogImage],
+//       creator: settings.settings.twitter_handle || '@AyushBhandari',
+//     },
+//     robots,
+//     other: {
+//       'og:locale': settings.settings.site_language || 'en_US',
+//       'article:author': profile?.name || settings.settings.author_name || 'Ayush Bhandari',
+//     },
+//   };
+// }
+
+
+      {/* <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: profile?.name || settings.settings.author_name || 'Ayush Bhandari',
+            jobTitle: profile?.tagline || 'Software Engineer',
+            description: profile?.short_intro || profile?.headline,
+            image: profile?.profile_image_url,
+            url: baseUrl,
+            sameAs: [
+              settings.settings.github_url,
+              settings.settings.linkedin_url,
+              settings.settings.twitter_url,
+            ].filter(Boolean),
+            knowsAbout: profile?.keywords || [],
+          }),
+        }}
+      /> */}

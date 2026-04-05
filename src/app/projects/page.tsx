@@ -4,48 +4,29 @@ import { getProjects, getBootstrap, getSEORobots } from '@/lib/data';
 import ProjectCard from '@/components/ProjectCard';
 import PageHeader from '@/components/PageHeader';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
+import { buildMetadata } from '@/lib/seo/metadata';
+import { projectListJsonLd } from '@/lib/seo/jsonld';
+import { websiteJsonLd } from '@/lib/seo/website';
+import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
+import { speakableJsonLd } from '@/lib/seo/speakable';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const bootstrap = await getBootstrap();
   const settings = normalizeSettingsFromBootstrap(bootstrap);
-  
-  const pageTitle = settings.settings.projects_page_title || 'Projects';
-  const pageDescription = settings.settings.projects_page_description || 
-    'Explore my portfolio of web development projects, applications, and technical solutions.';
-  const ogImage = settings.settings.projects_og_image || '/logo.png';
-  const robots = getSEORobots(settings, 'projects');
 
-  return {
-    title: pageTitle,
-    description: pageDescription,
+  return buildMetadata({
+    settings: settings,
+    page: "creation-list-page",
+    title: settings.settings.projects_page_title || 'Projects',
+    description: settings.settings.projects_page_description || 
+    'Explore my portfolio of web development projects, applications, and technical solutions.',
+    path: `/projects`,
+    image: settings.settings.projects_og_image || '/logo.png',
     keywords: settings.settings.projects_page_keywords || 'projects, portfolio, web development, applications',
-    alternates: { 
-      canonical: `${baseUrl}/projects` 
-    },
-    openGraph: {
-      type: 'website',
-      url: `${baseUrl}/projects`,
-      title: settings.settings.projects_og_title || pageTitle,
-      description: settings.settings.projects_og_description || pageDescription,
-      images: [{ 
-        url: ogImage, 
-        width: 1200, 
-        height: 630, 
-        alt: 'Projects Portfolio' 
-      }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: settings.settings.projects_twitter_title || pageTitle,
-      description: settings.settings.projects_twitter_description || pageDescription,
-      images: [ogImage],
-    },
-    robots,
-  };
+  });
 }
 
 export default async function ProjectsPage() {
@@ -63,13 +44,12 @@ export default async function ProjectsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'CollectionPage',
-            name: 'Projects Portfolio',
-            description: 'Collection of web development projects and applications',
-            url: `${baseUrl}/projects`,
-          }),
+          __html: JSON.stringify([
+            projectListJsonLd(),
+            websiteJsonLd(),
+            breadcrumbsJsonLd([]),
+            speakableJsonLd(),
+          ]),
         }}
       />
 
@@ -119,3 +99,55 @@ export default async function ProjectsPage() {
     </>
   );
 }
+
+// export async function generateMetadata(): Promise<Metadata> {
+//   const bootstrap = await getBootstrap();
+//   const settings = normalizeSettingsFromBootstrap(bootstrap);
+  
+//   const pageTitle = settings.settings.projects_page_title || 'Projects';
+//   const pageDescription = settings.settings.projects_page_description || 
+//     'Explore my portfolio of web development projects, applications, and technical solutions.';
+//   const ogImage = settings.settings.projects_og_image || '/logo.png';
+//   const robots = getSEORobots(settings, 'projects');
+
+//   return {
+//     title: pageTitle,
+//     description: pageDescription,
+//     keywords: settings.settings.projects_page_keywords || 'projects, portfolio, web development, applications',
+//     alternates: { 
+//       canonical: `${baseUrl}/projects` 
+//     },
+//     openGraph: {
+//       type: 'website',
+//       url: `${baseUrl}/projects`,
+//       title: settings.settings.projects_og_title || pageTitle,
+//       description: settings.settings.projects_og_description || pageDescription,
+//       images: [{ 
+//         url: ogImage, 
+//         width: 1200, 
+//         height: 630, 
+//         alt: 'Projects Portfolio' 
+//       }],
+//     },
+//     twitter: {
+//       card: 'summary_large_image',
+//       title: settings.settings.projects_twitter_title || pageTitle,
+//       description: settings.settings.projects_twitter_description || pageDescription,
+//       images: [ogImage],
+//     },
+//     robots,
+//   };
+// }    
+
+      {/* <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: 'Projects Portfolio',
+            description: 'Collection of web development projects and applications',
+            url: `${baseUrl}/projects`,
+          }),
+        }}
+      /> */}
