@@ -22,7 +22,7 @@ export interface Creation {
   is_public: boolean;
   language: string;
   translation_key: string;
-  featured_image?: File | null;
+  featured_image?: string | null;
   featured_image_alt: string | null;
   featured_image_url?: string | null;
   type: "blog" | "poem" | "story" | "article";

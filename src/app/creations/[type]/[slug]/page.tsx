@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCreationBySlug, getCreations, getBootstrap, getDisplayLimit } from '@/lib/data';
 import { Creation } from '@/types';
-import CreationDetailClient from '@/components/CreationDetailClient';
+import {CreationDetailClient} from '@/components/client/DynamicSections';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import { buildMetadata } from "@/lib/seo/metadata";
 import { creationDetailJsonLd } from '@/lib/seo/jsonld';
@@ -11,8 +11,24 @@ import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
 import { speakableJsonLd } from '@/lib/seo/speakable';
 
-export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const allParams: Array<{ type: string; slug: string }> = [];
+
+  await Promise.all(
+    validTypes.map(async (type) => {
+      const creations = await getCreations({ type, page_size: 1000 });
+      (creations || []).forEach((creation: any) => {
+        if (creation?.slug) {
+          allParams.push({ type, slug: creation.slug });
+        }
+      });
+    })
+  );
+
+  return allParams;
+}
 
 const validTypes = ['blog', 'poem', 'story', 'article'] as const;
 type CreationType = typeof validTypes[number];
@@ -27,9 +43,9 @@ async function getRelatedCreations(
   
   // 1. Try to get same type, same language
   const sameType = await getCreations({ type: currentType });
-  const sameTypeFiltered = sameType.slice(0,limit).filter(
-    c => c.slug !== currentCreation.slug && c.language === currentCreation.language
-  );
+  const sameTypeFiltered = sameType
+    .slice(0, limit)
+    .filter((c: Creation) => c.slug !== currentCreation.slug && c.language === currentCreation.language);
   related.push(...sameTypeFiltered.slice(0, limit));
   
   // 2. If we don't have enough, get from other types with same language
@@ -42,8 +58,8 @@ async function getRelatedCreations(
       
       const otherCreations = await getCreations({ type: otherType, limit: needed * 2 });
       const filtered = otherCreations.filter(
-        c => c.language === currentCreation.language &&
-        !related.some(r => r.id === c.id)
+        (c: Creation) =>
+          c.language === currentCreation.language && !related.some((r: Creation) => r.id === c.id)
       );
       
       related.push(...filtered.slice(0, needed - related.length));
@@ -116,7 +132,7 @@ export default async function CreationDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify([
-            creationDetailJsonLd(creation, settings.settings),
+            creationDetailJsonLd(creation),
             websiteJsonLd(),
             breadcrumbsJsonLd([]),
             speakableJsonLd(),

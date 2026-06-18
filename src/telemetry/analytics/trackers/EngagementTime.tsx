@@ -4,14 +4,21 @@
 import { useEffect, useRef } from 'react'
 
 export default function EngagementTime() {
-  const start = useRef(Date.now())
+  const startRef = useRef<number | null>(null)
   const sentRef = useRef(false)
 
+
   useEffect(() => {
+    // set start time on mount (avoid impure Date.now() during render)
+    startRef.current = Date.now()
+
     const sendTime = () => {
+
       if (sentRef.current) return
       
-      const duration = Math.round((Date.now() - start.current) / 1000)
+      if (!startRef.current) return
+      const duration = Math.round((Date.now() - startRef.current) / 1000)
+
 
       // Only send if user was engaged for more than 10 seconds
       if (typeof window !== 'undefined' && (window as any).gtag && duration > 10) {

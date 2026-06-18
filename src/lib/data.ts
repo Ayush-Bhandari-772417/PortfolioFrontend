@@ -7,7 +7,7 @@ const API = process.env.NEXT_PUBLIC_API_URL!;
 /* -------------------- 1. Single fetch with revalidation -------------------- */
 async function apiFetch(url: string) {
   const res = await fetch(API + url, {
-    next: { revalidate: 3600 },
+    next: { revalidate: 86400 },
   });
 
   if (!res.ok) throw new Error("Failed to load data from " + API + ": " + url);
@@ -28,6 +28,8 @@ export const getBootstrap = cache(async () => {
 export const getProjects = cache(async (params?: {
   featured?: boolean;
   limit?: number;
+  page?: number;
+  page_size?: number;
   category?: string;
 }) => {
   const qs = new URLSearchParams(params as any).toString();
@@ -43,6 +45,8 @@ export const getProjectBySlug = cache(async (slug: string) => {
 export const getCreations = cache(async (params?: {
   type?: "blog" | "poem" | "story" | "article";
   limit?: number;
+  page?: number;
+  page_size?: number;
   category?: string;
 }) => {
   const qs = new URLSearchParams(params as any).toString();

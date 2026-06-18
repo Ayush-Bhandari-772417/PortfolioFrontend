@@ -12,7 +12,6 @@ export default function PageHeader({ title, subtitle, gradient, icon }: PageHead
   return (
     <div className={`relative bg-gradient-to-r ${gradient} text-white py-24`}>
       <div className="absolute inset-0 bg-black/10"></div>
-      <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10"></div>
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">

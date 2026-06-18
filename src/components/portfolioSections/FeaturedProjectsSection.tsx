@@ -4,6 +4,7 @@ import { getProjects, getDisplayLimit } from '@/lib/data';
 import ProjectCard from '@/components/cards/ProjectCard';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { Project } from '@/types';
 
 export default async function FeaturedProjectsSection({ settings }: { settings: AllSettings }) {
   const limit = getDisplayLimit(settings, 'home', 'projects', 3);
@@ -18,14 +19,14 @@ export default async function FeaturedProjectsSection({ settings }: { settings: 
         <div className="flex items-center justify-between mb-12">
           <div>
             <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
-              Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Projects</span>
+              Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A6FB] to-[#006494]">Projects</span>
             </h2>
             <p className="text-xl text-slate-600">Showcasing my best work</p>
           </div>
           
           <Link
             href="/projects"
-            className="hidden md:flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold hover:shadow-lg transition-all"
+            className="hidden md:flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#00A6FB] to-[#006494] text-white font-semibold hover:shadow-lg hover:shadow-[#006494]/20 transition-all"
           >
             View All
             <ArrowRight className="w-5 h-5" />
@@ -33,7 +34,7 @@ export default async function FeaturedProjectsSection({ settings }: { settings: 
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {projects.map((project, index) => (
+          {projects.map((project: Project, index: number) => (
             <ProjectCard key={project.id} project={project} index={index} featured />
           ))}
         </div>
@@ -41,7 +42,7 @@ export default async function FeaturedProjectsSection({ settings }: { settings: 
         <div className="text-center md:hidden">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold hover:shadow-lg transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#00A6FB] to-[#006494] text-white font-semibold hover:shadow-lg hover:shadow-[#006494]/20 transition-all"
           >
             View All Projects
             <ArrowRight className="w-5 h-5" />

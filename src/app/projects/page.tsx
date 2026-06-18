@@ -9,9 +9,10 @@ import { projectListJsonLd } from '@/lib/seo/jsonld';
 import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
 import { speakableJsonLd } from '@/lib/seo/speakable';
+import { Project } from '@/types';
 
-export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
+
 
 export async function generateMetadata(): Promise<Metadata> {
   const bootstrap = await getBootstrap();
@@ -38,8 +39,10 @@ export default async function ProjectsPage() {
 
   const featuredLimit = getDisplayLimit(settings, 'portfolio', 'project', 6);
   const regularLimit = getDisplayLimit(settings, 'portfolio', 'project', 12);
-  const featuredProjects = projects.filter(p => p.featured).slice(0, featuredLimit);
-  const regularProjects = projects.filter(p => !p.featured).slice(0, regularLimit);
+  const featuredProjects = projects.filter((p: Project) => p.featured).slice(0, featuredLimit);
+  const regularProjects = projects.filter((p: Project) => !p.featured).slice(0, regularLimit);
+  console.log('Featured Projects:', featuredProjects.length);
+  console.log('Regular Projects:', regularProjects.length);
 
   return (
     <>
@@ -70,7 +73,7 @@ export default async function ProjectsPage() {
                 Featured Projects
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredProjects.map((project, index) => (
+                {featuredProjects.map((project: any, index: number) => (
                   <ProjectCard key={project.id} project={project} index={index} featured />
                 ))}
               </div>
@@ -83,7 +86,7 @@ export default async function ProjectsPage() {
               All Projects
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {regularProjects.map((project, index) => (
+              {regularProjects.map((project: Project, index: number) => (
                 <ProjectCard key={project.id} project={project} index={index} />
               ))}
             </div>

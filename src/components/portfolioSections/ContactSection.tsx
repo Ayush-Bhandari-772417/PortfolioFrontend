@@ -1,51 +1,24 @@
 // frontend2\src\components\portfolioSections\ContactSection.tsx
 'use client';
 import { Mail, Phone, MapPin, Send, CheckCircle, XCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { AllSettings } from '@/types';
-
-declare global {
-  interface Window {
-    grecaptcha: any;
-  }
-}
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export default function ContactSection({ settings }: { settings: AllSettings }) {
   const [formData, setFormData] = useState({ email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const { loaded: recaptchaLoaded, error: recaptchaError, load, execute, resetToken } = useRecaptcha('contact');
 
-  // Check for reCAPTCHA load
-  useEffect(() => {
-    // Demo mode
-    // setRecaptchaLoaded(true);
-    
-    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    
-    if (!siteKey) {
-      setRecaptchaLoaded(true);
-      return;
-    }
-
-    if (window.grecaptcha) {
-      setRecaptchaLoaded(true);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      if (window.grecaptcha) {
-        setRecaptchaLoaded(true);
-        clearInterval(interval);
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Lazy load reCAPTCHA when user interacts with form fields
+  const handleFieldFocus = useCallback(() => {
+    load();
+  }, [load]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.message) {
       setErrorMessage('Please fill in all fields');
       return;
@@ -55,19 +28,12 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
     setErrorMessage('');
 
     try {
-      // Demo mode - no actual API call in artifact
-      let token = null;
-      
-      // In production, uncomment this code:
-      
-      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-
       // Get reCAPTCHA token if available
-      if (window.grecaptcha && siteKey) {
-        try {
-          token = await window.grecaptcha.execute(siteKey, { action: 'contact' });
-        } catch (error) {
-          console.error('reCAPTCHA error:', error);
+      let token = null;
+      if (!recaptchaError) {
+        token = await execute();
+        if (!token && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+          // reCAPTCHA failed but site key exists
           setStatus('error');
           setErrorMessage('Security verification failed. Please try again.');
           setTimeout(() => {
@@ -93,10 +59,11 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
       if (response.ok) {
         setStatus('success');
         setFormData({ email: '', message: '' });
+        resetToken();
         setTimeout(() => setStatus('idle'), 5000);
       } else {
         setStatus('error');
-        
+
         if (response.status === 429) {
           setErrorMessage('Too many requests. Please try again later.');
         } else if (data.error) {
@@ -107,15 +74,17 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
         } else {
           setErrorMessage('Failed to send message. Please try again.');
         }
-        
+
+        resetToken();
         setTimeout(() => {
           setStatus('idle');
           setErrorMessage('');
         }, 5000);
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
       setErrorMessage('Network error. Please check your connection.');
+      resetToken();
       setTimeout(() => {
         setStatus('idle');
         setErrorMessage('');
@@ -124,17 +93,17 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
   };
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <section id="contact" className="py-20 bg-gradient-to-br from-[#F4FBFF] via-white to-[#E6F6FE] relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#00A6FB]/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#003554]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-4">
-            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">Touch</span>
+            Get In <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A6FB] via-[#0582CA] to-[#003554]">Touch</span>
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">Have a project in mind? Let's create something amazing together!</p>
         </div>
@@ -142,8 +111,8 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Contact Info */}
           <div className="space-y-6 animate-slide-in-left">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
-              <h3 className="text-3xl font-bold text-slate-900 mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-8 shadow-xl shadow-[#006494]/10 border border-[#00A6FB]/15 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <h3 className="text-3xl font-bold text-slate-900 mb-6 bg-gradient-to-r from-[#00A6FB] to-[#006494] bg-clip-text text-transparent">
                 Contact Information
               </h3>
               
@@ -151,44 +120,44 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
                 {/* Email */}
                 <a
                   href={`mailto:${settings.settings.email || 'hello@example.com'}`}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-100/50 hover:from-blue-100 hover:to-blue-200/50 transition-all duration-300 group cursor-pointer border border-blue-200/50"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-[#00A6FB]/10 to-[#0582CA]/10 hover:from-[#00A6FB]/15 hover:to-[#0582CA]/15 transition-all duration-300 group cursor-pointer border border-[#00A6FB]/20"
                 >
-                  <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <div className="w-14 h-14 bg-gradient-to-r from-[#00A6FB] to-[#0582CA] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Mail className="w-7 h-7 text-white" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Email</div>
-                    <div className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    <div className="text-xs font-semibold text-[#006494] uppercase tracking-wide">Email</div>
+                    <div className="text-lg font-bold text-slate-900 group-hover:text-[#006494] transition-colors">
                       {settings.settings.email || 'hello@example.com'}
                     </div>
                   </div>
-                  <div className="text-blue-400 group-hover:translate-x-1 transition-transform">→</div>
+                  <div className="text-[#0582CA] group-hover:translate-x-1 transition-transform">-&gt;</div>
                 </a>
 
                 {/* Phone */}
                 <a
                   href={`tel:${settings.settings.phone || '+15551234567'}`}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100/50 hover:from-purple-100 hover:to-purple-200/50 transition-all duration-300 group cursor-pointer border border-purple-200/50"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-[#0582CA]/10 to-[#006494]/10 hover:from-[#0582CA]/15 hover:to-[#006494]/15 transition-all duration-300 group cursor-pointer border border-[#0582CA]/20"
                 >
-                  <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <div className="w-14 h-14 bg-gradient-to-r from-[#0582CA] to-[#006494] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Phone className="w-7 h-7 text-white" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Phone</div>
-                    <div className="text-lg font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
+                    <div className="text-xs font-semibold text-[#006494] uppercase tracking-wide">Phone</div>
+                    <div className="text-lg font-bold text-slate-900 group-hover:text-[#006494] transition-colors">
                       {settings.settings.phone || '+1 (555) 123-4567'}
                     </div>
                   </div>
-                  <div className="text-purple-400 group-hover:translate-x-1 transition-transform">→</div>
+                  <div className="text-[#0582CA] group-hover:translate-x-1 transition-transform">-&gt;</div>
                 </a>
 
                 {/* Location */}
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-orange-50 to-red-100/50 border border-orange-200/50">
-                  <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-[#006494]/10 to-[#003554]/10 border border-[#006494]/20">
+                  <div className="w-14 h-14 bg-gradient-to-r from-[#006494] to-[#003554] rounded-2xl flex items-center justify-center shadow-lg">
                     <MapPin className="w-7 h-7 text-white" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs font-semibold text-orange-600 uppercase tracking-wide">Location</div>
+                    <div className="text-xs font-semibold text-[#006494] uppercase tracking-wide">Location</div>
                     <div className="text-lg font-bold text-slate-900">
                       {settings.settings.location || 'San Francisco, CA'}
                     </div>
@@ -198,18 +167,18 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
             </div>
 
             {/* Quick Response Badge */}
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 text-white shadow-xl">
+            <div className="bg-gradient-to-r from-[#006494] to-[#003554] rounded-2xl p-6 text-white shadow-xl shadow-[#003554]/20">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
                 <span className="font-bold text-lg">Quick Response</span>
               </div>
-              <p className="text-emerald-50">I typically respond within 24 hours during business days.</p>
+              <p className="text-[#E6F6FE]">I typically respond within 24 hours during business days.</p>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="animate-slideInRight">
-            <div className="bg-white rounded-3xl p-8 shadow-2xl border border-slate-100">
+            <div className="bg-white rounded-2xl p-8 shadow-2xl shadow-[#006494]/10 border border-[#00A6FB]/15">
               <div className="space-y-6">
                 <div>
                   <label htmlFor="email" className="block text-sm font-bold text-slate-700 mb-2">
@@ -221,8 +190,9 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onFocus={handleFieldFocus}
                     disabled={status === 'loading'}
-                    className="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 placeholder-slate-400"
+                    className="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-[#00A6FB] focus:ring-4 focus:ring-[#00A6FB]/15 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 placeholder-slate-400"
                     placeholder="your@email.com"
                     suppressHydrationWarning
                   />
@@ -238,8 +208,9 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
                     rows={6}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onFocus={handleFieldFocus}
                     disabled={status === 'loading'}
-                    className="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 placeholder-slate-400"
+                    className="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-[#00A6FB] focus:ring-4 focus:ring-[#00A6FB]/15 focus:outline-none transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 placeholder-slate-400"
                     placeholder="Tell me about your project, ideas, or questions..."
                     suppressHydrationWarning
                   />
@@ -247,10 +218,10 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
 
                 <button
                   onClick={handleSubmit}
-                  disabled={status === 'loading' || !formData.email || !formData.message || !recaptchaLoaded}
-                  className="w-full px-8 py-5 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 relative overflow-hidden group"
+                  disabled={status === 'loading' || !formData.email || !formData.message || !recaptchaLoaded || recaptchaError}
+                  className="w-full px-8 py-5 rounded-xl bg-gradient-to-r from-[#00A6FB] via-[#0582CA] to-[#006494] text-white font-bold text-lg hover:shadow-2xl hover:shadow-[#006494]/20 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 relative overflow-hidden group"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0582CA] via-[#006494] to-[#003554] opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <span className="relative z-10 flex items-center gap-3">
                     {status === 'loading' ? (
                       <>
@@ -278,8 +249,8 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
 
                 {/* Success Message */}
                 {status === 'success' && (
-                  <div className="p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl animate-fadeIn">
-                    <p className="text-green-700 text-center font-bold flex items-center justify-center gap-2">
+                  <div className="p-5 bg-gradient-to-r from-[#00A6FB]/10 to-[#0582CA]/10 border-2 border-[#00A6FB]/25 rounded-xl animate-fadeIn">
+                    <p className="text-[#006494] text-center font-bold flex items-center justify-center gap-2">
                       <CheckCircle className="w-5 h-5" />
                       Message sent successfully! I'll get back to you soon.
                     </p>
@@ -288,8 +259,8 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
 
                 {/* Error Message */}
                 {status === 'error' && errorMessage && (
-                  <div className="p-5 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl animate-fadeIn">
-                    <p className="text-red-700 text-center font-bold flex items-center justify-center gap-2">
+                  <div className="p-5 bg-gradient-to-r from-[#051923]/5 to-[#003554]/10 border-2 border-[#003554]/25 rounded-xl animate-fadeIn">
+                    <p className="text-[#003554] text-center font-bold flex items-center justify-center gap-2">
                       <XCircle className="w-5 h-5" />
                       {errorMessage}
                     </p>

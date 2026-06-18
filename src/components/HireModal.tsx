@@ -1,14 +1,8 @@
-// frontend2\src\components\HireModal.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { X, Send, CheckCircle, XCircle } from 'lucide-react';
-
-declare global {
-  interface Window {
-    grecaptcha: any;
-  }
-}
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 interface HireModalProps {
   isOpen: boolean;
@@ -25,31 +19,12 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const { loaded: recaptchaLoaded, error: recaptchaError, load, execute, resetToken } = useRecaptcha('hire');
 
-  // Check for reCAPTCHA load
-  useEffect(() => {
-    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || 'demo-key';
-    
-    if (!siteKey || siteKey === 'demo-key') {
-      setRecaptchaLoaded(true);
-      return;
-    }
-
-    if (window.grecaptcha) {
-      setRecaptchaLoaded(true);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      if (window.grecaptcha) {
-        setRecaptchaLoaded(true);
-        clearInterval(interval);
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Lazy load reCAPTCHA when user interacts with any form field
+  const handleFieldFocus = useCallback(() => {
+    load();
+  }, [load]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,15 +38,12 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
     setErrorMessage('');
 
     try {
-      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || 'demo-key';
-      let token = null;
-
       // Get reCAPTCHA token if available
-      if (window.grecaptcha && siteKey !== 'demo-key') {
-        try {
-          token = await window.grecaptcha.execute(siteKey, { action: 'hire' });
-        } catch (error) {
-          console.error('reCAPTCHA error:', error);
+      let token = null;
+      if (!recaptchaError) {
+        token = await execute();
+        if (!token && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+          // reCAPTCHA failed but site key exists
           setStatus('error');
           setErrorMessage('Security verification failed. Please try again.');
           setTimeout(() => {
@@ -100,13 +72,14 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
       if (response.ok) {
         setStatus('success');
         setFormData({ name: '', email: '', phone: '', stipend: '', details: '' });
+        resetToken();
         setTimeout(() => {
           onClose();
           setStatus('idle');
         }, 2000);
       } else {
         setStatus('error');
-        
+
         // Handle different error types
         if (response.status === 429) {
           setErrorMessage('Too many requests. Please try again later.');
@@ -118,15 +91,17 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
         } else {
           setErrorMessage('Failed to send request. Please try again.');
         }
-        
+
+        resetToken();
         setTimeout(() => {
           setStatus('idle');
           setErrorMessage('');
         }, 5000);
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
       setErrorMessage('Network error. Please check your connection.');
+      resetToken();
       setTimeout(() => {
         setStatus('idle');
         setErrorMessage('');
@@ -154,6 +129,7 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
               <p className="text-emerald-100">Let's work together on your project</p>
             </div>
             <button
+              type="button"
               onClick={onClose}
               className="p-2 hover:bg-white/20 rounded-full transition-colors"
             >
@@ -174,6 +150,7 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onFocus={handleFieldFocus}
               disabled={status === 'loading'}
               className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="John Doe"
@@ -191,6 +168,7 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onFocus={handleFieldFocus}
               disabled={status === 'loading'}
               className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="john@example.com"
@@ -208,6 +186,7 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
               required
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onFocus={handleFieldFocus}
               disabled={status === 'loading'}
               className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="+1 (555) 123-4567"
@@ -225,6 +204,7 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
               required
               value={formData.stipend}
               onChange={(e) => setFormData({ ...formData, stipend: e.target.value })}
+              onFocus={handleFieldFocus}
               disabled={status === 'loading'}
               className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="$5,000 - $10,000"
@@ -242,6 +222,7 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
               rows={6}
               value={formData.details}
               onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+              onFocus={handleFieldFocus}
               disabled={status === 'loading'}
               className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition-colors resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Tell me about your project, timeline, and requirements..."
@@ -249,8 +230,9 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
           </div>
 
           <button
+            type="button"
             onClick={handleSubmit}
-            disabled={status === 'loading' || !recaptchaLoaded}
+            disabled={status === 'loading' || recaptchaError}
             className="w-full px-8 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {status === 'loading' ? (

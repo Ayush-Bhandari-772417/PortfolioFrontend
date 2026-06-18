@@ -11,8 +11,11 @@ import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
 import { speakableJsonLd } from '@/lib/seo/speakable';
 
-export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  return validTypes.map((type) => ({ type }));
+}
 
 const validTypes = ['blog', 'poem', 'story', 'article'] as const;
 type CreationType = typeof validTypes[number];
@@ -103,7 +106,7 @@ export default async function CreationTypePage({
 
         <section className="container mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {creations.map((creation, index) => (
+            {creations.map((creation: any, index: number) => (
               <CreationCard key={creation.id} creation={creation} index={index} />
             ))}
           </div>

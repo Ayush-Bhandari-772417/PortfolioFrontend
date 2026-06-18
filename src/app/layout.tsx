@@ -1,14 +1,26 @@
 // frontend2\src\app\layout.tsx
-import { Suspense } from 'react'
+import dynamic from 'next/dynamic';
 import Navbar from "@/components/commonSections/Navbar";
 import '@/styles/globals.css';
-import Footer from "@/components/commonSections/Footer";
 import Script from "next/script";
 import { Metadata } from 'next';
-import ReactQueryProvider from '@/providers/ReactQueryProvider';
 import { getBootstrap, getDisplayLimit } from '@/lib/data';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
-import { AnalyticsProvider } from '@/components/analytics';
+import TelemetryProvider from '@/telemetry/react/TelemetryProvider';
+// Analytics and trackers are loaded after first paint via TelemetryProvider
+
+const Footer = dynamic(
+  () => import('@/components/commonSections/Footer'),
+  {
+    loading: () => (
+      <footer className="bg-slate-950/80 text-slate-100 border-t border-slate-900">
+        <div className="container mx-auto px-6 lg:px-12 py-20">
+          <div className="h-24 rounded-3xl bg-slate-900/60 animate-pulse" />
+        </div>
+      </footer>
+    ),
+  }
+);
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
@@ -50,7 +62,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = normalizeSettingsFromBootstrap(bootstrap);
   const { social_media, } = bootstrap;
 
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
   const gscid = process.env.NEXT_PUBLIC_GSC_VERIFICATION;
 
   return (
@@ -59,6 +70,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="google-site-verification" content={gscid} />
         <meta name="googlebot" content="index, follow" />
         <meta name="bingbot" content="index, follow" />
+        {/* Preconnect to key third-party origins to save connection time */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Load Inter with display=swap to avoid FOIT and reduce CLS */}
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
         {/* Load KaTeX CSS asynchronously to prevent blocking render */}
         <Script id="katex-css-loader" strategy="lazyOnload">
           {`
@@ -72,50 +88,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           `}
         </Script>
       </head>
-      <body className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-blue-100 text-slate-800 antialiased">
-        {/* Google Analytics with consent mode and lazy loading */}
-        {gaId && (
-          <>
-            <Script
-              id="gtag-init"
-              strategy="lazyOnload"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${gaId}', {
-                    'anonymize_ip': true,
-                    'cookie_flags': 'SameSite=None;Secure',
-                    'cookie_expires': 63072000
-                  });
-                `,
-              }}
-            />
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-              strategy="lazyOnload"
-            />
-          </>
-        )}
-
-        <Suspense fallback={null}>
-          <AnalyticsProvider />
-        </Suspense>
-
-        <ReactQueryProvider>
-          <Navbar settings={settings} />
-          <main className="min-h-screen flex flex-col" role="main">{children}</main>
-          <Footer social_media={social_media.slice(0, getDisplayLimit(settings, 'home', 'social_media', 6))} settings={settings} />
-        </ReactQueryProvider>
+      <body className="min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased">
+        <TelemetryProvider />
+        <Navbar settings={settings} />
+        <main className="min-h-screen flex flex-col" role="main">{children}</main>
+        <Footer social_media={social_media.slice(0, getDisplayLimit(settings, 'home', 'social_media', 6))} settings={settings} />
       </body>
-      {/* Load reCAPTCHA with optimized strategy */}
-      {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
-        <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-          strategy="lazyOnload"
-        />
-      )}
     </html>
   );
 }

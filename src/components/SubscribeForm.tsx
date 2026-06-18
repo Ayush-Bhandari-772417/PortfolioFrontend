@@ -1,48 +1,24 @@
 // frontend2\src\components\SubscribeForm.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Send, CheckCircle, XCircle } from 'lucide-react';
-
-declare global {
-  interface Window {
-    grecaptcha: any;
-  }
-}
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export default function SubscribeForm() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const { loaded: recaptchaLoaded, error: recaptchaError, load, execute, resetToken } = useRecaptcha('subscribe');
 
-  // Check for reCAPTCHA load
-  useEffect(() => {
-    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    
-    if (!siteKey) {
-      setRecaptchaLoaded(true);
-      return;
-    }
-
-    if (window.grecaptcha) {
-      setRecaptchaLoaded(true);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      if (window.grecaptcha) {
-        setRecaptchaLoaded(true);
-        clearInterval(interval);
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Lazy load reCAPTCHA when user interacts with the email field
+  const handleFieldFocus = useCallback(() => {
+    load();
+  }, [load]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       setErrorMessage('Please enter your email');
       return;
@@ -52,15 +28,12 @@ export default function SubscribeForm() {
     setErrorMessage('');
 
     try {
-      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-      let token = null;
-
       // Get reCAPTCHA token if available
-      if (window.grecaptcha && siteKey) {
-        try {
-          token = await window.grecaptcha.execute(siteKey, { action: 'subscribe' });
-        } catch (error) {
-          console.error('reCAPTCHA error:', error);
+      let token = null;
+      if (!recaptchaError) {
+        token = await execute();
+        if (!token && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+          // reCAPTCHA failed but site key exists
           setStatus('error');
           setErrorMessage('Security verification failed. Please try again.');
           setTimeout(() => setStatus('idle'), 5000);
@@ -71,10 +44,10 @@ export default function SubscribeForm() {
       // Submit to backend
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscribes/`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email,
           token, // reCAPTCHA token
         }),
@@ -85,10 +58,11 @@ export default function SubscribeForm() {
       if (response.ok) {
         setStatus('success');
         setEmail('');
+        resetToken();
         setTimeout(() => setStatus('idle'), 5000);
       } else {
         setStatus('error');
-        
+
         // Handle different error types
         if (response.status === 429) {
           setErrorMessage('Too many requests. Please try again later.');
@@ -100,15 +74,17 @@ export default function SubscribeForm() {
         } else {
           setErrorMessage('Subscription failed. Please try again.');
         }
-        
+
+        resetToken();
         setTimeout(() => {
           setStatus('idle');
           setErrorMessage('');
         }, 5000);
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
       setErrorMessage('Network error. Please check your connection.');
+      resetToken();
       setTimeout(() => {
         setStatus('idle');
         setErrorMessage('');
@@ -124,6 +100,7 @@ export default function SubscribeForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onFocus={handleFieldFocus}
           placeholder="your@email.com"
           disabled={status === 'loading'}
           className="flex-1 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -132,7 +109,7 @@ export default function SubscribeForm() {
         
         <button
           type="submit"
-          disabled={status === 'loading' || !email || !recaptchaLoaded}
+          disabled={status === 'loading' || !email || !recaptchaLoaded || recaptchaError}
           className="px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2 min-w-[140px]"
         >
           {status === 'loading' ? (

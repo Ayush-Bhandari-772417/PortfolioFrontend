@@ -1,13 +1,15 @@
 // frontend2\src\app\page.tsx
-import Hero from '@/components/portfolioSections/Hero';
+import {
+  Home,
+  Skills,
+  Services,
+  Contact
+} from '@/components/client/DynamicSections';
 import About from '@/components/portfolioSections/About';
-import SkillsSection from '@/components/portfolioSections/SkillsSection';
 import QualificationsSection from '@/components/portfolioSections/QualificationsSection';
-import ExperienceSection from '@/components/portfolioSections/ExperienceSection';
-import ServicesSection from '@/components/portfolioSections/ServicesSection';
+import Experience from '@/components/portfolioSections/ExperienceSection';
 import FeaturedProjectsSection from '@/components/portfolioSections/FeaturedProjectsSection';
 import CreationsPreviewSection from '@/components/portfolioSections/CreationsPreviewSection';
-import ContactSection from '@/components/portfolioSections/ContactSection';
 import { getBootstrap, getDisplayLimit } from "@/lib/data";
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import type { Metadata } from 'next';
@@ -17,8 +19,10 @@ import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
 import { speakableJsonLd } from '@/lib/seo/speakable';
 
-export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
+
+const _lintTitle = 'home'; 
+void _lintTitle;
 
 export async function generateMetadata(): Promise<Metadata> {
   const bootstrap = await getBootstrap();
@@ -74,15 +78,15 @@ export default async function HomePage() {
       />
 
       <main className="min-h-screen">
-        <Hero profile={profile} settings={settings} />
+        <Home profile={profile} settings={settings} />
         <About profile={profile} settings={settings} />
-        {showSkills && <SkillsSection skills={skills.slice(0, getDisplayLimit(settings, 'home', 'skills', 10))} />}
+        {showSkills && <Skills skills={skills.slice(0, getDisplayLimit(settings, 'home', 'skills', 7))} />}
         {showQualifications && <QualificationsSection qualifications={qualifications.slice(0, getDisplayLimit(settings, 'home', 'qualifications', 10))} />}
-        {showExperience && <ExperienceSection experiences={experience.slice(0, getDisplayLimit(settings, 'home', 'experiences', 3))} />}
-        {showServices && <ServicesSection services={services.slice(0, getDisplayLimit(settings, 'home', 'services', 6))} />}
+        {showExperience && <Experience experiences={experience.slice(0, getDisplayLimit(settings, 'home', 'experiences', 3))} />}
+        {showServices && <Services services={services.slice(0, getDisplayLimit(settings, 'home', 'services', 6))} />}
         {showProjects && <FeaturedProjectsSection settings={settings} />}
         {showCreations && <CreationsPreviewSection settings={settings} />}
-        {showContact && <ContactSection settings={settings} />}
+        {showContact && <Contact settings={settings} />}
       </main>
     </>
   );

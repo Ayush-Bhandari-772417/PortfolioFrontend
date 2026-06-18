@@ -3,11 +3,16 @@
 
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
+import Script from 'next/script'
 
 export default function GoogleAnalytics() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const gaId = process.env.NEXT_PUBLIC_GA_ID
+
+  const pagePath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
+
+  if (!gaId) return null
 
   useEffect(() => {
     if (!gaId || typeof window === 'undefined' || !window.gtag) return
@@ -31,5 +36,22 @@ export default function GoogleAnalytics() {
     }
   }, [pathname, searchParams, gaId])
 
-  return null
+  // Render scripts only after the component is mounted and GA id exists.
+  return (
+    <>
+      <Script
+        id="ga-script"
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+      />
+      <Script id="ga-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)};
+          gtag('js', new Date());
+          gtag('config', '${gaId}', {page_path: '${pagePath}'});
+        `}
+      </Script>
+    </>
+  )
 }

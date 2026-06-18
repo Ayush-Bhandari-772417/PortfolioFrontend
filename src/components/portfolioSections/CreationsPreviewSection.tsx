@@ -4,6 +4,7 @@ import { getCreations, getDisplayLimit } from '@/lib/data';
 import CreationCard from '@/components/cards/CreationCard';
 import Link from 'next/link';
 import { ArrowRight, BookOpen, Sparkles, FileText, Newspaper } from 'lucide-react';
+import { Creation } from '@/types';
 
 export default async function CreationsPreviewSection({ settings }: { settings: AllSettings }) {
   const limit = getDisplayLimit(settings, 'home', 'creations', 2);
@@ -24,26 +25,26 @@ export default async function CreationsPreviewSection({ settings }: { settings: 
   if (allCreations.length === 0) return null;
 
   const sections = [
-    { type: 'blog', label: 'Blog Posts', items: blogs, icon: Newspaper, color: 'from-blue-500 to-cyan-500' },
-    { type: 'poem', label: 'Poems', items: poems, icon: Sparkles, color: 'from-purple-500 to-pink-500' },
-    { type: 'story', label: 'Stories', items: stories, icon: BookOpen, color: 'from-orange-500 to-red-500' },
-    { type: 'article', label: 'Articles', items: articles, icon: FileText, color: 'from-green-500 to-emerald-500' },
+    { type: 'blog', label: 'Blog Posts', items: blogs, icon: Newspaper, color: 'from-[#00A6FB] to-[#0582CA]' },
+    { type: 'poem', label: 'Poems', items: poems, icon: Sparkles, color: 'from-[#0582CA] to-[#006494]' },
+    { type: 'story', label: 'Stories', items: stories, icon: BookOpen, color: 'from-[#006494] to-[#003554]' },
+    { type: 'article', label: 'Articles', items: articles, icon: FileText, color: 'from-[#003554] to-[#051923]' },
   ].filter(section => section.items.length > 0);
 
   return (
-    <section id="creations" className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
+    <section id="creations" className="py-20 bg-gradient-to-br from-[#F4FBFF] to-[#E6F6FE]">
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between mb-12">
           <div>
             <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
-              My <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Creations</span>
+              My <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0582CA] to-[#003554]">Creations</span>
             </h2>
             <p className="text-xl text-slate-600">Creative writings and thoughts</p>
           </div>
           
           <Link
             href="/creations"
-            className="hidden md:flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-lg transition-all"
+            className="hidden md:flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#0582CA] to-[#003554] text-white font-semibold hover:shadow-lg hover:shadow-[#003554]/20 transition-all"
           >
             View All
             <ArrowRight className="w-5 h-5" />
@@ -60,7 +61,7 @@ export default async function CreationsPreviewSection({ settings }: { settings: 
                 </h3>
                 <Link
                   href={`/creations/${type}`}
-                  className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 text-sm"
+                  className="text-[#006494] hover:text-[#003554] font-semibold flex items-center gap-1 text-sm"
                 >
                   See All
                   <ArrowRight className="w-4 h-4" />
@@ -68,7 +69,7 @@ export default async function CreationsPreviewSection({ settings }: { settings: 
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {items.map((creation, index) => (
+                {items.map((creation: Creation, index: number) => (
                   <CreationCard key={creation.id} creation={creation} index={index} />
                 ))}
               </div>
@@ -79,7 +80,7 @@ export default async function CreationsPreviewSection({ settings }: { settings: 
         <div className="text-center mt-12 md:hidden">
           <Link
             href="/creations"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-lg transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#0582CA] to-[#003554] text-white font-semibold hover:shadow-lg hover:shadow-[#003554]/20 transition-all"
           >
             View All Creations
             <ArrowRight className="w-5 h-5" />

@@ -3,64 +3,96 @@
 module.exports = {
   theme: {
     extend: {
+      colors: {
+        navy: {
+          50: '#f8fafc',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+          950: '#0f172a',
+        },
+        ocean: {
+          900: '#0a1428',
+          950: '#020617',
+        },
+        blueGlow: '#60a5fa',
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'glow-blue': '0 0 20px rgba(59, 130, 246, 0.3)',
+        'glow-lg': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        'navy-glow': '0 0 30px rgba(30, 58, 138, 0.4)',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)' },
+          '50%': { boxShadow: '0 0 40px rgba(59, 130, 246, 0.6)' },
+        },
+      },
       typography: (theme) => ({
-      DEFAULT: {
-        css: {
-          // Tighten figure → figcaption spacing
-          figcaption: {
-            marginTop: theme('spacing.1.5'),     // 0.375rem ≈ 6px
-            marginBottom: '0',
-            textAlign: 'left',                   // or 'center' — try both
-            fontStyle: 'italic',
-            color: theme('colors.slate.600'),
-            fontSize: theme('fontSize.sm'),
-          },
-
-          // Reduce unwanted sibling margin inside figure (img + figcaption)
-          'figure > * + *': {
-            marginTop: theme('spacing.1.5'),
-          },
-
-          // For custom caption divs (table/equation) — keep tight
-          '.table-caption, .figure-caption, .equation-caption': {
-            marginTop: theme('spacing.1'),
-            marginBottom: theme('spacing.3'),
-            fontStyle: 'italic',
-            color: theme('colors.slate.600'),
-          },
-
-          // Optional: reduce overall figure block spacing if still too much
-          figure: {
-            marginTop: theme('spacing.5'),
-            marginBottom: theme('spacing.5'),
-          },
-
-          // Tables (helps if using real <caption> or custom div before table)
-          caption: {
-            marginBottom: theme('spacing.2'),
-            textAlign: 'left',
-            fontStyle: 'italic',
-            color: theme('colors.slate.600'),
+        DEFAULT: {
+          css: {
+            figcaption: {
+              marginTop: theme('spacing.1.5'),
+              marginBottom: '0',
+              textAlign: 'left',
+              fontStyle: 'italic',
+              color: theme('colors.navy.600'),
+              fontSize: theme('fontSize.sm'),
+            },
+            'figure > * + *': {
+              marginTop: theme('spacing.1.5'),
+            },
+            '.table-caption, .figure-caption, .equation-caption': {
+              marginTop: theme('spacing.1'),
+              marginBottom: theme('spacing.3'),
+              fontStyle: 'italic',
+              color: theme('colors.navy.600'),
+            },
+            figure: {
+              marginTop: theme('spacing.5'),
+              marginBottom: theme('spacing.5'),
+            },
+            caption: {
+              marginBottom: theme('spacing.2'),
+              textAlign: 'left',
+              fontStyle: 'italic',
+              color: theme('colors.navy.600'),
+            },
           },
         },
-      },
-      // If you're using prose-lg (you are)
-      lg: {
-        css: {
-          figcaption: {
-            marginTop: theme('spacing.2'),
-          },
-          figure: {
-            marginTop: theme('spacing.6'),
-            marginBottom: theme('spacing.6'),
+        lg: {
+          css: {
+            figcaption: {
+              marginTop: theme('spacing.2'),
+            },
+            figure: {
+              marginTop: theme('spacing.6'),
+              marginBottom: theme('spacing.6'),
+            },
           },
         },
-      },
       }),
     },
   },
-
-//   plugins: [
-//     require('@tailwindcss/typography'),
-//   ],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };

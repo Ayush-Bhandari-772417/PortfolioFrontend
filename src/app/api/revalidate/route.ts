@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       tags,
     });
 
-  } catch (error) {
+  } catch { 
     return NextResponse.json(
       { error: "Revalidation failed" },
       { status: 500 }

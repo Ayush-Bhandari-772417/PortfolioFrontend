@@ -12,8 +12,8 @@ import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
 import { speakableJsonLd } from '@/lib/seo/speakable';
 
-export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
+
 
 const creationTypes = [
   { type: 'blog', label: 'Blog Posts', icon: Newspaper, color: 'from-blue-500 to-cyan-500' },
@@ -121,7 +121,7 @@ export default async function CreationsPage() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {items.map((creation, index) => (
+                {items.map((creation: any, index: number) => (
                   <CreationCard key={creation.id} creation={creation} index={index} />
                 ))}
               </div>

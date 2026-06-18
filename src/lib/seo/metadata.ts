@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { AllSettings } from "@/types";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 type Props = {
   settings: AllSettings;
@@ -32,12 +32,14 @@ export function buildMetadata({
   type = "website",
 }: Props): Metadata {
   const robots = settings.seo[page];
-  const siteName = settings.settings.site_name;
+  const siteName = settings.settings.site_name || 'Ayush Bhandari';
   const author = settings.settings.author_name || 'Ayush Bhandari';
+  const defaultTitle = title || `${siteName} | Portfolio`;
+  const defaultDescription = description || settings.settings.home_page_description || 'Portfolio & creations of Ayush Bhandari';
 
   return {
-    title,
-    description,
+    title: defaultTitle,
+    description: defaultDescription,
     keywords,
     authors: [{ name: author }],
     robots: {
@@ -50,20 +52,20 @@ export function buildMetadata({
     openGraph: {
       type,
       url: `${baseUrl}${path}`,
-      title,
-      description,
+      title: defaultTitle,
+      description: defaultDescription,
       siteName,
       locale,
       images: image
-        ? [{ url: image, width: 1200, height: 630, alt: title }]
+        ? [{ url: image, width: 1200, height: 630, alt: defaultTitle }]
         : undefined,
       publishedTime,
       modifiedTime,
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: defaultTitle,
+      description: defaultDescription,
       images: image ? [image] : undefined,
       creator: settings.settings.twitter_handle || undefined,
     },

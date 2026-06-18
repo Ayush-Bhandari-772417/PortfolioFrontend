@@ -12,11 +12,11 @@ interface Heading {
 
 interface TableOfContentsProps {
   headings: Heading[];
-  activeId: string;
+  activeId?: string;
   onHeadingClick: (id: string) => void;
 }
 
-export default function TableOfContents({ headings, activeId, onHeadingClick }: TableOfContentsProps) {
+export default function TableOfContents({ headings, onHeadingClick }: TableOfContentsProps) {
   const navRef = useRef<HTMLDivElement>(null);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
@@ -99,17 +99,18 @@ export default function TableOfContents({ headings, activeId, onHeadingClick }: 
                       )}
                     </button>
                   )}
-                  <a
-                    href={`#${heading.id}`}
-                    onClick={(e) => handleClick(e, heading.id)}
+                  <button
+                    type="button"
+                    onClick={() => onHeadingClick(heading.id)}
                     className={`flex-1 block text-sm transition-all duration-200 py-2.5 px-4 rounded-xl relative font-semibold ${
                       !hasChildren ? 'ml-5' : ''
-                    } text-slate-700 hover:bg-white/60 hover:text-blue-600 hover:shadow-sm`}
+                    } text-slate-700 hover:bg-white/60 hover:text-blue-600 hover:shadow-sm text-left`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="line-clamp-2 leading-tight">{heading.text}</span>
                     </div>
-                  </a>
+                  </button>
+
                 </div>
 
                 {/* H3+ Children */}

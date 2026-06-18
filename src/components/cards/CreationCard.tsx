@@ -1,6 +1,4 @@
 // frontend2\src\components\CreationCard.tsx
-'use client';
-
 import { Creation } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,10 +12,10 @@ interface CreationCardProps {
 
 export default function CreationCard({ creation, index }: CreationCardProps) {
   const typeColors = {
-    blog: 'from-blue-500 to-cyan-500',
-    poem: 'from-purple-500 to-pink-500',
-    story: 'from-orange-500 to-red-500',
-    article: 'from-green-500 to-emerald-500',
+    blog: 'from-[#00A6FB] to-[#0582CA]',
+    poem: 'from-[#0582CA] to-[#006494]',
+    story: 'from-[#006494] to-[#003554]',
+    article: 'from-[#003554] to-[#051923]',
   };
 
   const publishDate = creation.published_date || creation.written_date;
@@ -25,7 +23,7 @@ export default function CreationCard({ creation, index }: CreationCardProps) {
   return (
     <Link 
       href={`/creations/${creation.type}/${creation.slug}`}
-      className="group block bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+      className="group block bg-white rounded-2xl shadow-lg shadow-[#006494]/10 hover:shadow-2xl hover:shadow-[#006494]/15 transition-all duration-300 overflow-hidden border border-[#00A6FB]/15"
       style={{ 
         animation: 'fadeInUp 0.6s ease-out forwards',
         animationDelay: `${index * 100}ms`,
@@ -39,8 +37,8 @@ export default function CreationCard({ creation, index }: CreationCardProps) {
             src={creation.featured_image}
             alt={creation.featured_image_alt || creation.title}
             fill
+            sizes="(max-width: 768px) 100vw, 435px"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
-            unoptimized
           />
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${typeColors[creation.type]}`}></div>
@@ -61,7 +59,7 @@ export default function CreationCard({ creation, index }: CreationCardProps) {
           )}
         </div>
 
-        <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+        <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#006494] transition-colors line-clamp-2">
           {creation.title}
         </h3>
 

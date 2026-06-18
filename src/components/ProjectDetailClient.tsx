@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, Github, ExternalLink, Tag, Users, ArrowLeft, Sparkles, Layers, Clock, CheckCircle, PauseCircle } from 'lucide-react';
 import ProjectRecommendationCard from './cards/ProjectRecommendationCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface ProjectDetailClientProps {
   project: Project;
@@ -15,47 +15,59 @@ interface ProjectDetailClientProps {
 }
 
 export default function ProjectDetailClient({ project, settings, relatedProjects }: ProjectDetailClientProps) {
+  // Use settings to satisfy lint (and optionally drive UI copy)
+  const siteName = settings?.settings?.site_name || 'Portfolio';
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [docHeight, setDocHeight] = useState(0);
+  const ticking = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrollTop / docHeight) * 100;
-      setScrollProgress(progress);
+      setScrollTop(window.scrollY);
+      setDocHeight(document.documentElement.scrollHeight - window.innerHeight);
+
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const progress = (scrollTop / docHeight) * 100;
+          setScrollProgress(progress);
+          ticking.current = false;
+        });
+
+        ticking.current = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [scrollTop, docHeight]);
 
   const startedYear = new Date(project.started_date).getFullYear();
   const completedYear = project.completed_date ? new Date(project.completed_date).getFullYear() : null;
 
   const statusConfig = {
-    completed: { color: 'bg-emerald-500', text: 'Completed', icon: CheckCircle },
-    ongoing: { color: 'bg-blue-500', text: 'In Progress', icon: Clock },
-    planned: { color: 'bg-amber-500', text: 'Planned', icon: Sparkles },
-    paused: { color: 'bg-orange-500', text: 'Paused', icon: PauseCircle },
+    completed: { color: 'bg-[#00A6FB]', text: 'Completed', icon: CheckCircle },
+    ongoing: { color: 'bg-[#0582CA]', text: 'In Progress', icon: Clock },
+    planned: { color: 'bg-[#006494]', text: 'Planned', icon: Sparkles },
+    paused: { color: 'bg-[#003554]', text: 'Paused', icon: PauseCircle },
   } as const;
 
   const status = statusConfig[project.status] ?? statusConfig.ongoing;
   const StatusIcon = status.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#F4FBFF] via-white to-[#E6F6FE]">
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-slate-200 z-50">
         <div 
-          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300"
+          className="h-full bg-gradient-to-r from-[#00A6FB] via-[#0582CA] to-[#006494] transition-all duration-300"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
       {/* Enhanced Hero Section */}
       <div className="relative overflow-hidden pt-16 md:pt-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600"></div>
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#051923] via-[#003554] to-[#006494]"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
         
         {/* Animated particles */}
@@ -74,7 +86,8 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               <span className="text-sm sm:text-base">Back to projects</span>
             </Link>
 
-            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 flex-wrap">
+<div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 flex-wrap">
+              <span className="sr-only">{siteName}</span>
               <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-white ${status.color} shadow-lg backdrop-blur-sm flex items-center gap-1.5`}>
                 <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                 {status.text}
@@ -83,7 +96,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
                 {project.project_type.charAt(0).toUpperCase() + project.project_type.slice(1)}
               </span>
               {project.featured && (
-                <span className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+                <span className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#00A6FB] to-[#0582CA] shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
                   <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                   Featured
                 </span>
@@ -133,7 +146,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               href={project.live_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:shadow-xl transition-all text-sm"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-[#00A6FB] to-[#006494] text-white font-bold rounded-xl hover:shadow-xl hover:shadow-[#006494]/20 transition-all text-sm"
             >
               <ExternalLink className="w-4 h-4" />
               <span>Live Demo</span>
@@ -161,14 +174,16 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
             <div className="lg:col-span-8 space-y-6 sm:space-y-8">
               {/* Featured Image with Overlay */}
               {project.featured_image && (
-                <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl group">
+                <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl group">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10"></div>
                   <Image
                     src={project.featured_image}
                     alt={project.featured_image_alt || project.title}
                     fill
+                    fetchPriority="high"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 800px, 1200px"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    unoptimized
+                    priority
                   />
                   <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 z-20 text-white">
                     <p className="text-xs sm:text-sm font-semibold opacity-90 flex items-center gap-2">
@@ -180,9 +195,9 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               )}
 
               {/* Abstract with Icon */}
-              <div className="bg-linear-to-br from-white to-blue-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg border border-blue-100">
+              <div className="bg-linear-to-br from-white to-[#E6F6FE] rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg shadow-[#006494]/10 border border-[#00A6FB]/20">
                 <div className="flex items-start gap-3 sm:gap-4 mb-4">
-                  <div className="p-2.5 sm:p-3 bg-linear-to-r from-blue-500 to-purple-500 rounded-xl sm:rounded-2xl shrink-0">
+                  <div className="p-2.5 sm:p-3 bg-linear-to-r from-[#00A6FB] to-[#006494] rounded-xl sm:rounded-2xl shrink-0">
                     <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Project Overview</h2>
@@ -192,9 +207,9 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
 
               {/* Features with Enhanced Design */}
               {project.features.length > 0 && (
-                <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg border border-slate-200">
+                <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg shadow-[#006494]/10 border border-[#00A6FB]/15">
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 sm:mb-8 flex items-center gap-3">
-                    <span className="w-1.5 sm:w-2 h-6 sm:h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></span>
+                    <span className="w-1.5 sm:w-2 h-6 sm:h-8 bg-gradient-to-b from-[#00A6FB] to-[#006494] rounded-full"></span>
                     Key Features
                   </h2>
                   <div className="grid gap-3 sm:gap-4">
@@ -203,7 +218,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
                         key={index} 
                         className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 transition-all group"
                       >
-                        <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md group-hover:scale-110 transition-transform">
+                        <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-gradient-to-br from-[#00A6FB] to-[#006494] flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md group-hover:scale-110 transition-transform">
                           {index + 1}
                         </span>
                         <span className="text-slate-700 text-base sm:text-lg leading-relaxed pt-0.5">{feature}</span>
@@ -215,9 +230,9 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
 
               {/* Gallery with Proper Captions */}
               {project.gallery_images && project.gallery_images.length > 0 && (
-                <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg border border-slate-200">
+                <div className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg shadow-[#006494]/10 border border-[#00A6FB]/15">
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 sm:mb-8 flex items-center gap-3">
-                    <span className="w-1.5 sm:w-2 h-6 sm:h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></span>
+                    <span className="w-1.5 sm:w-2 h-6 sm:h-8 bg-gradient-to-b from-[#0582CA] to-[#003554] rounded-full"></span>
                     Project Gallery
                   </h2>
                   
@@ -234,8 +249,8 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
                               src={galleryImage.image}
                               alt={galleryImage.caption || `Gallery image ${galleryImage.order}`}
                               fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
                               className="object-cover group-hover:scale-110 transition-transform duration-500"
-                              unoptimized
                             />
                             {galleryImage.caption && (
                               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -258,7 +273,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
 
               {/* Client Feedback */}
               {project.client_feedback && (
-                <div className="relative bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl text-white overflow-hidden">
+                <div className="relative bg-gradient-to-br from-[#006494] to-[#003554] rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl shadow-[#003554]/20 text-white overflow-hidden">
                   <div className="absolute top-2 sm:top-4 left-2 sm:left-4 text-white/20 text-6xl sm:text-9xl font-serif leading-none">"</div>
                   <div className="relative z-10">
                     <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Client Feedback</h2>
@@ -278,7 +293,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
                     href={project.live_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:shadow-xl transition-all transform hover:-translate-y-1"
+                    className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r from-[#00A6FB] to-[#006494] text-white font-bold rounded-xl hover:shadow-xl hover:shadow-[#006494]/20 transition-all transform hover:-translate-y-1"
                   >
                     <ExternalLink className="w-5 h-5" />
                     Live Demo
@@ -304,7 +319,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
                   <div className="flex flex-wrap gap-2">
                     {project.technologies.map((tech, index) => (
                       // <TechBadge key={index} tech={tech} />
-                      <span className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 rounded-lg text-sm font-medium border border-blue-100">
+                      <span key={index} className="px-3 py-1.5 bg-gradient-to-r from-[#00A6FB]/10 to-[#006494]/10 text-[#006494] rounded-lg text-sm font-medium border border-[#00A6FB]/20">
                         {tech}
                       </span>
                     ))}
@@ -316,12 +331,12 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               {project.tags.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
                   <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Tag className="w-5 h-5 text-blue-600" />
+                    <Tag className="w-5 h-5 text-[#006494]" />
                     Tags
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {project.tags.map((tag, index) => (
-                      <span key={index} className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-blue-50 text-slate-700 rounded-lg text-sm font-medium hover:from-slate-200 hover:to-blue-100 transition-colors border border-slate-200">
+                      <span key={index} className="px-3 py-1.5 bg-gradient-to-r from-slate-100 to-[#00A6FB]/10 text-slate-700 rounded-lg text-sm font-medium hover:from-slate-200 hover:to-[#00A6FB]/15 transition-colors border border-slate-200">
                         {tag}
                       </span>
                     ))}
@@ -333,12 +348,12 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               {project.contributors.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
                   <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-purple-600" />
+                    <Users className="w-5 h-5 text-[#006494]" />
                     Team
                   </h3>
                   <ul className="space-y-2">
                     {project.contributors.map((contributor, index) => (
-                      <li key={index} className="text-slate-700 pl-4 border-l-3 border-blue-300 py-1 hover:border-blue-500 hover:bg-blue-50 transition-all rounded-r">
+                      <li key={index} className="text-slate-700 pl-4 border-l-3 border-[#00A6FB]/50 py-1 hover:border-[#00A6FB] hover:bg-[#00A6FB]/5 transition-all rounded-r">
                         {contributor}
                       </li>
                     ))}
@@ -347,10 +362,10 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               )}
 
               {/* Related Projects - Shows on ALL screen sizes */}
-{relatedProjects.length > 0 && (
-                <div className="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 shadow-lg border-2 border-purple-100">
+              {relatedProjects.length > 0 && (
+                <div className="bg-gradient-to-br from-white to-[#E6F6FE] rounded-2xl p-6 shadow-lg shadow-[#006494]/10 border-2 border-[#00A6FB]/20">
                   <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-purple-600" />
+                    <Layers className="w-5 h-5 text-[#006494]" />
                     More Projects
                   </h3>
                   <div className="space-y-3">
@@ -360,9 +375,9 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
                   </div>
                   <Link 
                     href="/projects" 
-                    className="block mt-4 text-center px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 hover:from-purple-200 hover:to-blue-200 text-purple-700 rounded-lg transition-colors text-sm font-semibold"
+                    className="block mt-4 text-center px-4 py-2 bg-gradient-to-r from-[#00A6FB]/10 to-[#006494]/10 hover:from-[#00A6FB]/15 hover:to-[#006494]/15 text-[#006494] rounded-lg transition-colors text-sm font-semibold"
                   >
-                    View All Projects →
+                    View All Projects -&gt;
                   </Link>
                 </div>
               )}

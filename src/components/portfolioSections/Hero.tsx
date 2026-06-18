@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from 'next/image';
 import { ArrowRight, Download, Sparkles } from 'lucide-react';
 import { AllSettings, Profile } from '@/types';
-import HireModal from '@/components/HireModal';
+import { HireModal } from '@/components/client/DynamicSections';
 
 export default function Hero({ profile, settings }: { profile: Profile | null, settings: AllSettings }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,11 +29,11 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
   const projectsCount = profile?.projects_completed || 0;
 
   return (
-    <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-gradient-to-br from-[var(--color-bg-start)] via-[var(--color-bg-middle)] to-[var(--color-bg-end)]">
       {/* Simple background decoration */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-200 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-200 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-primary-light)] rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--color-secondary-light)] rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-6 md:px-12 py-20 relative z-10">
@@ -41,16 +41,16 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
           {/* Left: Text Content */}
           <div className="flex-1 text-center md:text-left space-y-6">
             {/* Status Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-blue-100">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-accent-light)] backdrop-blur-sm rounded-full shadow-md border border-[var(--color-accent)]/20">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
               </span>
-              <span className="text-sm font-medium text-slate-700">Available for opportunities</span>
+              <span className="text-sm font-medium text-[var(--color-accent)]">Available for opportunities</span>
             </div>
 
             {/* Greeting */}
-            <p className="text-lg md:text-xl text-slate-600 font-medium">
+            <p className="text-lg md:text-xl text-[var(--color-accent)] font-medium">
               {tagline}
             </p>
 
@@ -60,7 +60,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
               {name.split(' ').slice(1).length > 0 && (
                 <>
                   <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-accent)]">
                     {name.split(' ').slice(1).join(' ')}
                   </span>
                 </>
@@ -75,7 +75,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
             )}
 
             {/* Description */}
-            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-xl mx-auto md:mx-0">
+            <p className="text-base md:text-lg text-[var(--color-accent)] leading-relaxed max-w-xl mx-auto md:mx-0">
               {shortIntro}
             </p>
 
@@ -84,7 +84,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
               {showContactButton && (
                 <a 
                   href="#contact" 
-                  className="group px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
+                className="group px-8 py-4 rounded-full bg-gradient-to-r from-[#00A6FB] to-[#0582CA] text-white font-semibold hover:from-[#0582CA] hover:to-[#006494] transition-all shadow-lg shadow-[#006494]/20 hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
                 >
                   {contactButtonText}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -94,7 +94,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
               {showHireButton && (
                 <div 
                   onClick={() => setModalOpen(true)}
-                  className="group px-8 py-4 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
+                  className="group px-8 py-4 rounded-full bg-gradient-to-r from-[#006494] to-[#003554] text-white font-semibold hover:from-[#0582CA] hover:to-[#003554] transition-all shadow-lg shadow-[#003554]/25 hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
                 >
                   <Sparkles className="w-5 h-5" />
                   {hireButtonText}
@@ -106,7 +106,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
                   href={resumeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group px-8 py-4 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2"
+                  className="group px-8 py-4 rounded-full border-2 border-[#006494] text-[#006494] font-semibold hover:bg-[#006494] hover:text-white transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2"
                 >
                   <Download className="w-5 h-5" />
                   {resumeButtonText}
@@ -120,7 +120,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
               <div className="flex flex-wrap justify-center md:justify-start gap-8 pt-8">
                 {yearsExp > 0 && (
                   <div className="text-center md:text-left">
-                    <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                    <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00A6FB] to-[#006494]">
                       {yearsExp}+
                     </div>
                     <div className="text-sm text-slate-600 font-medium mt-1">Years Experience</div>
@@ -128,7 +128,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
                 )}
                 {projectsCount > 0 && (
                   <div className="text-center md:text-left">
-                    <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                    <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0582CA] to-[#003554]">
                       {projectsCount}+
                     </div>
                     <div className="text-sm text-slate-600 font-medium mt-1">Projects Completed</div>
@@ -143,7 +143,7 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
             <div className="relative group">
               <div className="relative w-72 h-72 md:w-96 md:h-96 lg:w-[420px] lg:h-[420px]">
                 {/* Rotating gradient border */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#00A6FB] via-[#0582CA] to-[#003554] opacity-75 group-hover:opacity-100 transition-opacity"></div>
                 
                 {/* Image container */}
                 <div className="absolute inset-2 rounded-full overflow-hidden bg-white shadow-2xl ring-4 ring-white/50">
@@ -152,15 +152,15 @@ export default function Hero({ profile, settings }: { profile: Profile | null, s
                     alt={profileImageAlt}
                     fill
                     priority
-                    unoptimized
-                    sizes="(max-width: 768px) 288px, (max-width: 1024px) 384px, 420px"
+                    fetchPriority="high"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 384px, 420px"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
 
                 {/* Status badge */}
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-xl border-2 border-blue-100 flex items-center gap-2">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                  <div className="w-3 h-3 bg-gradient-to-r from-[#00A6FB] to-[#006494] rounded-full animate-pulse"></div>
                   <span className="text-sm font-semibold text-slate-700">Open to Work</span>
                 </div>
               </div>

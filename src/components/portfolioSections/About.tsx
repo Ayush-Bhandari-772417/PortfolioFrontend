@@ -18,46 +18,46 @@ export default function About({ profile, settings }: { profile: Profile | null, 
     { 
       icon: Zap, 
       title: "Fast Learner", 
-      description: "Quick to adapt to new technologies",
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-50"
+      description: "Quick to adapt to new technologies and frameworks",
+      color: "text-[#00A6FB]",
+      bgColor: "bg-[#00A6FB]/10"
     },
     { 
       icon: Heart, 
       title: "Passionate", 
-      description: "Love what I do every day",
-      color: "text-red-600",
-      bgColor: "bg-red-50"
+      description: "Love what I do every single day",
+      color: "text-[#0582CA]",
+      bgColor: "bg-[#0582CA]/10"
     },
     { 
       icon: Briefcase, 
       title: "Professional", 
-      description: "Committed to quality work",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      description: "Committed to delivering quality work on time",
+      color: "text-[#006494]",
+      bgColor: "bg-[#006494]/10"
     },
     { 
       icon: Award, 
       title: "Dedicated", 
-      description: "Always striving for excellence",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50"
+      description: "Always striving for excellence and improvement",
+      color: "text-[#003554]",
+      bgColor: "bg-[#003554]/10"
     }
   ];
 
   return (
-    <section id='about' className="relative py-20 md:py-28 overflow-hidden bg-white">
-      <div className="container mx-auto px-6 md:px-12 relative">
+    <section id='about' className="py-28 bg-gradient-to-br from-[#F4FBFF] via-white to-[#E6F6FE] border-t border-[#00A6FB]/20">
+      <div className="container mx-auto px-6 lg:px-12 relative">
         {/* Section Header */}
-        <div className="text-center mb-16 md:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-4">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-sm font-medium text-blue-700">Get to know me</span>
+        <div className="text-center mb-28">
+          <div className="inline-flex items-center gap-3 px-8 py-4 bg-[#00A6FB]/10 rounded-2xl backdrop-blur-md mb-8 border border-[#00A6FB]/20 shadow-xl shadow-[#006494]/10">
+            <div className="w-3 h-3 bg-gradient-to-r from-[#00A6FB] to-[#0582CA] rounded-full shadow-lg"></div>
+            <span className="text-2xl font-bold text-[#003554]">Get to know me better</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4">
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 mb-8">
             {sectionTitle}
           </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 mx-auto rounded-full"></div>
+          <div className="w-32 h-2 bg-gradient-to-r from-[#00A6FB] via-[#0582CA] to-[#006494] mx-auto rounded-full shadow-lg"></div>
         </div>
         
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
@@ -65,16 +65,16 @@ export default function About({ profile, settings }: { profile: Profile | null, 
           <div className="w-full lg:w-5/12 flex justify-center">
             <div className="relative group">
               {/* Decorative background */}
-              <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-3xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
+              <div className="absolute -inset-4 bg-gradient-to-br from-[#00A6FB] via-[#0582CA] to-[#003554] rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-xl"></div>
               
               {/* Main image */}
-              <div className="relative w-80 h-80 md:w-96 md:h-96 rounded-3xl overflow-hidden shadow-2xl transform rotate-2 group-hover:rotate-0 transition-transform duration-500 border-8 border-white">
+              <div className="relative w-80 h-80 md:w-96 md:h-96 rounded-2xl overflow-hidden shadow-2xl transform rotate-2 group-hover:rotate-0 transition-transform duration-500 border-8 border-white">
                 <Image
                   src={aboutImage}
                   alt={aboutImageAlt}
                   fill
                   priority
-                  unoptimized
+                  fetchPriority="high"
                   sizes="(max-width: 768px) 320px, 384px"
                   className="object-cover"
                 />
@@ -85,14 +85,14 @@ export default function About({ profile, settings }: { profile: Profile | null, 
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white px-6 py-4 rounded-2xl shadow-xl border border-slate-100 min-w-[280px] hidden sm:block">
                   <div className="flex justify-around gap-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                      <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00A6FB] to-[#006494]">
                         {years}+
                       </div>
                       <div className="text-xs text-slate-600 font-medium">Years Exp.</div>
                     </div>
                     <div className="w-px bg-slate-200"></div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                      <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0582CA] to-[#003554]">
                         {projects}+
                       </div>
                       <div className="text-xs text-slate-600 font-medium">Projects</div>
@@ -116,14 +116,14 @@ export default function About({ profile, settings }: { profile: Profile | null, 
             {showStats && (
               <div className="flex flex-row justify-center lg:justify-start gap-12 sm:hidden">
                 <div className="text-center lg:text-left">
-                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00A6FB] to-[#006494]">
                     {years}+
                   </div>
                   <p className="text-sm font-medium text-slate-600 mt-1">Years Experience</p>
                 </div>
                 <div className="w-px bg-slate-200"></div>
                 <div className="text-center lg:text-left">
-                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                  <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0582CA] to-[#003554]">
                     {projects}+
                   </div>
                   <p className="text-sm font-medium text-slate-600 mt-1">Projects Done</p>
@@ -137,7 +137,7 @@ export default function About({ profile, settings }: { profile: Profile | null, 
                 {highlights.map((item, index) => (
                   <div 
                     key={index}
-                    className={`${item.bgColor} p-5 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-default group`}
+                    className={`${item.bgColor} p-5 rounded-xl border border-[#00A6FB]/10 hover:shadow-lg hover:shadow-[#006494]/10 transition-all duration-300 transform hover:-translate-y-1 cursor-default group`}
                   >
                     <div className={`${item.color} mb-2 transition-transform group-hover:scale-110`}>
                       <item.icon className="w-7 h-7" />
@@ -153,7 +153,7 @@ export default function About({ profile, settings }: { profile: Profile | null, 
             <div className="flex justify-center lg:justify-start pt-4">
               <a 
                 href="#contact" 
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+                className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#00A6FB] to-[#006494] text-white font-semibold rounded-full hover:shadow-xl hover:shadow-[#006494]/20 transform hover:-translate-y-0.5 transition-all duration-300"
               >
                 Let's Work Together
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -2,7 +2,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, getProjects, getBootstrap, getDisplayLimit } from '@/lib/data';
-import ProjectDetailClient from '@/components/ProjectDetailClient';
+import {ProjectDetailClient} from '@/components/client/DynamicSections';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import { buildMetadata } from '@/lib/seo/metadata';
 import { projectDetailJsonLd } from '@/lib/seo/jsonld';
@@ -10,8 +10,12 @@ import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
 import { speakableJsonLd } from '@/lib/seo/speakable';
 
-export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const projects = await getProjects({ page_size: 1000 });
+  return (projects || []).map((project: any) => ({ slug: project.slug }));
+}
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
@@ -58,8 +62,8 @@ export default async function ProjectDetailPage({
   // Get related projects (different slug, prefer same type or featured)
   const allProjects = await getProjects();
   const relatedProjects = allProjects
-    .filter(p => p.slug !== slug)
-    .sort((a, b) => {
+.filter((p: any) => p.slug !== slug)
+.sort((a: any, b: any) => {
       // Prioritize same project type
       if (a.project_type === project.project_type && b.project_type !== project.project_type) return -1;
       if (b.project_type === project.project_type && a.project_type !== project.project_type) return 1;
@@ -77,7 +81,7 @@ export default async function ProjectDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify([
-            projectDetailJsonLd(project, settings.settings),
+            projectDetailJsonLd(project),
             websiteJsonLd(),
             breadcrumbsJsonLd([]),
             speakableJsonLd(),

@@ -7,8 +7,8 @@ import { Calendar, Book, ArrowLeft, Clock, MapPin, ExternalLink } from 'lucide-r
 import CreationRecommendationCard from './cards/CreationRecommendationCard';
 import { formatDate } from '@/lib/data';
 import { useCallback, useState } from 'react';
-import ContentProcessor from '@/components/ContentProcessor';
-import TableOfContents from '@/components/TableOfContents';
+import {ContentProcessor} from '@/components/client/DynamicSections';
+import {TableOfContents} from '@/components/client/DynamicSections';
 
 interface Heading {
   id: string;
@@ -33,13 +33,14 @@ export default function CreationDetailClient({
   const [activeId, setActiveId] = useState<string>('');
   
   const typeColors = {
-    blog: 'from-blue-500 to-cyan-500',
-    poem: 'from-purple-500 to-pink-500',
-    story: 'from-orange-500 to-red-500',
-    article: 'from-green-500 to-emerald-500',
+    blog: 'from-[#00A6FB] to-[#0582CA]',
+    poem: 'from-[#0582CA] to-[#006494]',
+    story: 'from-[#006494] to-[#003554]',
+    article: 'from-[#003554] to-[#051923]',
   };
   
-  const publishDate = creation.published_date || creation.written_date;
+
+
   const postedDate = creation.posted_date;
   const updatedDate = creation.updated_date;
 
@@ -78,10 +79,9 @@ export default function CreationDetailClient({
   }, []);
 
   return (
-    <article className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20">
+    <article className="min-h-screen bg-gradient-to-br from-[#F4FBFF] via-white to-[#E6F6FE] pt-20">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-slate-900 to-slate-800 text-white py-16">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5"></div>
+      <div className="relative bg-gradient-to-r from-[#051923] via-[#003554] to-[#006494] text-white py-16">
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto">
@@ -98,7 +98,8 @@ export default function CreationDetailClient({
                 {creation.type.charAt(0).toUpperCase() + creation.type.slice(1)}
               </span>
               {categoryName && (
-                <span className="px-4 py-1 rounded-full text-sm font-semibold bg-blue-500 text-white shadow-lg">
+
+                <span className="px-4 py-1 rounded-full text-sm font-semibold bg-[#00A6FB] text-white shadow-lg">
                   {categoryName}
                 </span>
               )}
@@ -126,7 +127,7 @@ export default function CreationDetailClient({
               </div>
 
               {updatedDate !== postedDate && (
-                <div className="flex items-center gap-2 text-amber-300">
+                <div className="flex items-center gap-2 text-[#00A6FB]">
                   <Clock className="w-4 h-4" />
                   <span>Updated: {formatDate(updatedDate)}</span>
                 </div>
@@ -163,13 +164,15 @@ export default function CreationDetailClient({
                   src={creation.featured_image}
                   alt={creation.featured_image_alt || creation.title}
                   fill
+                  fetchPriority="high"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 800px, 1200px"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  unoptimized
+                  priority
                 />
               </div>
             )}
 
-            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg mb-8 border border-slate-200">
+            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg shadow-[#006494]/10 mb-8 border border-[#00A6FB]/15">
               {creation.content_html ? (
                 <ContentProcessor 
                   htmlContent={creation.content_html} 
@@ -185,9 +188,9 @@ export default function CreationDetailClient({
           {/* Right: Related Creations */}
           <aside className="lg:col-span-3">
 {displayedRelated.length > 0 && (
-              <div className="lg:sticky lg:top-24 bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
+              <div className="lg:sticky lg:top-24 bg-white rounded-2xl p-6 shadow-lg shadow-[#006494]/10 border border-[#00A6FB]/15">
                 <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <Book className="w-5 h-5 text-purple-600" />
+                  <Book className="w-5 h-5 text-[#006494]" />
                   Related {creation.type}s
                 </h3>
                 <div className="space-y-3">
@@ -197,9 +200,9 @@ export default function CreationDetailClient({
                 </div>
                 <Link 
                   href={`/creations/${creation.type}`} 
-                  className="block mt-4 text-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors text-sm font-medium"
+                  className="block mt-4 text-center px-4 py-2 bg-[#00A6FB]/10 hover:bg-[#00A6FB]/15 text-[#006494] rounded-lg transition-colors text-sm font-medium"
                 >
-                  View All {creation.type}s →
+                  View All {creation.type}s -&gt;
                 </Link>
               </div>
             )}

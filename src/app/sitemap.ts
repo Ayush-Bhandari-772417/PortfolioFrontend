@@ -2,6 +2,7 @@
 import { MetadataRoute } from "next";
 import { getBootstrap, getProjects, getCreations } from "@/lib/data";
 import { normalizeSettingsFromBootstrap } from "@/lib/normalizeSettings";
+import { Project, Creation } from "@/types";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
@@ -37,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic: Projects
   const projects = await getProjects();
-  projects.forEach((p) =>
+  projects.forEach((p: Project) =>
     urls.push({
       url: `${baseUrl}/projects/${p.slug}`,
       changeFrequency: "monthly",
@@ -47,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic: Creations
   const creations = await getCreations();
-  creations.forEach((c) =>
+  creations.forEach((c: Creation) =>
     urls.push({
       url: `${baseUrl}/creations/${c.type}/${c.slug}`,
       changeFrequency: "monthly",
