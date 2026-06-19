@@ -4,10 +4,10 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Ayush Bhandari',
-  description: 'Read the privacy policy for Ayush Bhandari\\'s portfolio website.',
+  description: 'Read the privacy policy for Ayush Bhandari\'s portfolio website.',
   openGraph: {
     title: 'Privacy Policy | Ayush Bhandari',
-    description: 'Read the privacy policy for Ayush Bhandari\\'s portfolio website.',
+    description: 'Read the privacy policy for Ayush Bhandari\'s portfolio website.',
     type: 'website',
   },
 };
