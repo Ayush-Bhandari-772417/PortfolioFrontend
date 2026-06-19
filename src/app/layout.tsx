@@ -75,18 +75,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Load Inter with display=swap to avoid FOIT and reduce CLS */}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-        {/* Load KaTeX CSS asynchronously to prevent blocking render */}
-        <Script id="katex-css-loader" strategy="lazyOnload">
-          {`
-            if (!document.querySelector('link[href*="katex"]')) {
-              const link = document.createElement('link');
-              link.rel = 'stylesheet';
-              link.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css';
-              link.crossOrigin = 'anonymous';
-              document.head.appendChild(link);
-            }
-          `}
-        </Script>
       </head>
       <body className="min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased">
         <TelemetryProvider />
