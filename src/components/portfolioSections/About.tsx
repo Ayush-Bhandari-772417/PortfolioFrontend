@@ -73,7 +73,6 @@ export default function About({ profile, settings }: { profile: Profile | null, 
                   src={aboutImage}
                   alt={aboutImageAlt}
                   fill
-                  priority
                   fetchPriority="high"
                   sizes="(max-width: 768px) 320px, 384px"
                   className="object-cover"

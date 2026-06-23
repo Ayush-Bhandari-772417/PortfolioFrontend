@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Read the privacy policy for Ayush Bhandari\'s portfolio website.',
   openGraph: {
     title: 'Privacy Policy | Ayush Bhandari',
-    description: 'Read the privacy policy for Ayush Bhandari\'s portfolio website.',
+    description: 'Read the privacy policy for Ayush BhandariStill\'s portfolio website.',
     type: 'website',
   },
 };
