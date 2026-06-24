@@ -8,7 +8,6 @@ import { buildMetadata } from '@/lib/seo/metadata';
 import { projectDetailJsonLd } from '@/lib/seo/jsonld';
 import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
-import { speakableJsonLd } from '@/lib/seo/speakable';
 
 export const revalidate = 86400;
 
@@ -80,12 +79,17 @@ export default async function ProjectDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            projectDetailJsonLd(project),
-            websiteJsonLd(),
-            breadcrumbsJsonLd([]),
-            speakableJsonLd(),
-          ]),
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              projectDetailJsonLd(project),
+              websiteJsonLd(),
+              breadcrumbsJsonLd([
+                { name: "Projects", path: "/projects" },
+                { name: project.title, path: `/projects/${project.slug}` },
+              ]),
+            ],
+          }),
         }}
       />
 

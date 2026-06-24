@@ -17,7 +17,6 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { homePageJsonLd } from "@/lib/seo/jsonld";
 import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
-import { speakableJsonLd } from '@/lib/seo/speakable';
 
 export const revalidate = 86400;
 
@@ -68,12 +67,14 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            homePageJsonLd(profile, settings),
-            websiteJsonLd(),
-            breadcrumbsJsonLd([]),
-            speakableJsonLd(),
-          ]),
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              homePageJsonLd(profile, settings),
+              websiteJsonLd(),
+              breadcrumbsJsonLd([]),
+            ],
+          }),
         }}
       />
 

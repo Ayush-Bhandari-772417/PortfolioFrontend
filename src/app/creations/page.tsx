@@ -10,7 +10,6 @@ import { buildMetadata } from '@/lib/seo/metadata';
 import { creationListJsonLd } from '@/lib/seo/jsonld';
 import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
-import { speakableJsonLd } from '@/lib/seo/speakable';
 
 export const revalidate = 86400;
 
@@ -67,14 +66,18 @@ export default async function CreationsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            creationListJsonLd(),
-            websiteJsonLd(),
-            breadcrumbsJsonLd([]),
-            speakableJsonLd(),
-          ]),
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              creationListJsonLd(),
+              websiteJsonLd(),
+              breadcrumbsJsonLd([
+                { name: "Creations", path: "/creations" },
+              ]),
+            ],
+          }),
         }}
-      />    
+      />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <PageHeader
           title="My Creations"

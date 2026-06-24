@@ -9,7 +9,6 @@ import { buildMetadata } from '@/lib/seo/metadata';
 import { creationTypeJsonLd } from '@/lib/seo/jsonld';
 import { websiteJsonLd } from '@/lib/seo/website';
 import { breadcrumbsJsonLd } from '@/lib/seo/breadcrumbs';
-import { speakableJsonLd } from '@/lib/seo/speakable';
 
 export const revalidate = 86400;
 
@@ -87,12 +86,17 @@ export default async function CreationTypePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            creationTypeJsonLd(config, type),
-            websiteJsonLd(),
-            breadcrumbsJsonLd([]),
-            speakableJsonLd(),
-          ]),
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              creationTypeJsonLd(config, type),
+              websiteJsonLd(),
+              breadcrumbsJsonLd([
+                { name: "Creations", path: "/creations" },
+                { name: config.label, path: `/creations/${type}` },
+              ]),
+            ],
+          }),
         }}
       />
 
