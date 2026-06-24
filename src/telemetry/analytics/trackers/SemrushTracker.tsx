@@ -2,6 +2,7 @@
 
 import { hasAnalyticsConsent } from '@/telemetry/core/consent';
 import { ANALYTICS_CONFIG } from '../config';
+import Script from 'next/script';
 
 /**
  * Semrush Sensor Widget
