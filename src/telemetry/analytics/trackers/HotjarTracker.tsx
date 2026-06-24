@@ -1,16 +1,9 @@
 'use client';
-import { useEffect } from 'react';
-import { hotjar } from 'react-hotjar';
-import { ANALYTICS_CONFIG } from '../config';
+
+import { hasAnalyticsConsent } from '@/telemetry/core/consent';
 
 export default function HotjarTracker() {
-  useEffect(() => {
-    if (ANALYTICS_CONFIG.hotjarId) {
-      hotjar.initialize({
-        id: Number(ANALYTICS_CONFIG.hotjarId),
-        sv: 6,
-      });
-    }
-  }, []);
+  if (!hasAnalyticsConsent()) return null;
+  // Initialization handled by the snippet in VerificationScripts.
   return null;
 }

@@ -7,6 +7,7 @@ import { Metadata } from 'next';
 import { getBootstrap, getDisplayLimit } from '@/lib/data';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import TelemetryProvider from '@/telemetry/react/TelemetryProvider';
+import VerificationScripts from '@/components/VerificationScripts';
 // Analytics and trackers are loaded after first paint via TelemetryProvider
 
 const Footer = dynamic(
@@ -75,6 +76,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Load Inter with display=swap to avoid FOIT and reduce CLS */}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+        {/* Verification scripts (e.g., Google Analytics) */}
+        <VerificationScripts />
       </head>
       <body className="min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased">
         <TelemetryProvider />

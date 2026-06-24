@@ -57,6 +57,16 @@ export const vendorRegistry: VendorConfig[] = [
     enabled: !!ANALYTICS_CONFIG.majesticId,
     load: () => import('@/telemetry/analytics/trackers/MajesticTracker'),
   },
+  {
+    name: 'semrush',
+    enabled: !!ANALYTICS_CONFIG.semrushId,
+    load: () => import('@/telemetry/analytics/trackers/SemrushTracker'),
+  },
+  {
+    name: 'recaptcha',
+    enabled: !!ANALYTICS_CONFIG.recaptchaKey,
+    load: () => import('@/telemetry/analytics/trackers/RecaptchaScript'),
+  },
   // behavioral analytics
   {
     name: 'scrollDepth',
