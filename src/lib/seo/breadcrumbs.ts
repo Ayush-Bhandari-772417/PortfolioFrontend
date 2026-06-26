@@ -22,6 +22,7 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
 
 export function breadcrumbsJsonLd(items: { name: string; path: string }[]) {
+  if (!items.length) return null;   // ← never emit empty BreadcrumbList
   return {
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({

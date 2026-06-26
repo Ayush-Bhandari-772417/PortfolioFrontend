@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { X, Send, CheckCircle, XCircle } from 'lucide-react';
+import Script from 'next/script';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 interface HireModalProps {
@@ -19,12 +20,20 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const { loaded: recaptchaLoaded, error: recaptchaError, load, execute, resetToken } = useRecaptcha('hire');
+  const [scriptEnabled, setScriptEnabled] = useState(false);
+  const {
+    loaded: recaptchaLoaded,
+    error: recaptchaError,
+    onScriptLoad,
+    onScriptError,
+    execute,
+    resetToken,
+  } = useRecaptcha('hire');
 
   // Lazy load reCAPTCHA when user interacts with any form field
   const handleFieldFocus = useCallback(() => {
-    load();
-  }, [load]);
+    setScriptEnabled(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -285,28 +294,15 @@ export default function HireModal({ isOpen, onClose }: HireModalProps) {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes scale-in {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.2s ease-out;
-        }
-        .animate-scale-in {
-          animation: scale-in 0.3s ease-out;
-        }
-      `}</style>
+      {/* Only injected after user focuses the field — but via next/script, not DOM manipulation */}
+      {scriptEnabled && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+          strategy="lazyOnload"
+          onLoad={onScriptLoad}
+          onError={onScriptError}
+        />
+      )}
     </div>
   );
 }

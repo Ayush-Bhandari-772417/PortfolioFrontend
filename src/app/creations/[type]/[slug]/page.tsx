@@ -140,7 +140,7 @@ export default async function CreationDetailPage({
                 { name: creation.type, path: `/creations/${creation.type}` },
                 { name: creation.title, path: creation.path },
               ]),
-            ],
+            ].filter(Boolean),
           }),
         }}
       />

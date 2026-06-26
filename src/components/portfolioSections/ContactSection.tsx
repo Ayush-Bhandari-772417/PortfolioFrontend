@@ -2,6 +2,7 @@
 'use client';
 import { Mail, Phone, MapPin, Send, CheckCircle, XCircle } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import Script from 'next/script';
 import { AllSettings } from '@/types';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
@@ -9,12 +10,13 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
   const [formData, setFormData] = useState({ email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const { loaded: recaptchaLoaded, error: recaptchaError, load, execute, resetToken } = useRecaptcha('contact');
+  const [scriptEnabled, setScriptEnabled] = useState(false);
+  const { loaded: recaptchaLoaded, error: recaptchaError, onScriptLoad, onScriptError, execute, resetToken } = useRecaptcha('contact');
 
   // Lazy load reCAPTCHA when user interacts with form fields
   const handleFieldFocus = useCallback(() => {
-    load();
-  }, [load]);
+    setScriptEnabled(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -276,6 +278,16 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
           </div>
         </div>
       </div>
+
+    {/* Only injected after user focuses the field — but via next/script, not DOM manipulation */}
+    {scriptEnabled && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        strategy="lazyOnload"
+        onLoad={onScriptLoad}
+        onError={onScriptError}
+      />
+    )}
     </section>
   );
 }

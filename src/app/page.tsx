@@ -73,7 +73,7 @@ export default async function HomePage() {
               homePageJsonLd(profile, settings),
               websiteJsonLd(),
               breadcrumbsJsonLd([]),
-            ],
+            ].filter(Boolean),
           }),
         }}
       />

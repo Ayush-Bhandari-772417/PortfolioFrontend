@@ -95,7 +95,7 @@ export default async function CreationTypePage({
                 { name: "Creations", path: "/creations" },
                 { name: config.label, path: `/creations/${type}` },
               ]),
-            ],
+            ].filter(Boolean),
           }),
         }}
       />

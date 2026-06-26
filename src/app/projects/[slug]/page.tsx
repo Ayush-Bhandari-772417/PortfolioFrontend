@@ -88,7 +88,7 @@ export default async function ProjectDetailPage({
                 { name: "Projects", path: "/projects" },
                 { name: project.title, path: `/projects/${project.slug}` },
               ]),
-            ],
+            ].filter(Boolean),
           }),
         }}
       />

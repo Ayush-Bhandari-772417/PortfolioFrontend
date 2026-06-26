@@ -56,7 +56,7 @@ export default async function ProjectsPage() {
               breadcrumbsJsonLd([
                 { name: "Projects", path: "/projects" },
               ]),
-            ],
+            ].filter(Boolean),
           }),
         }}
       />

@@ -2,7 +2,6 @@
 import dynamic from 'next/dynamic';
 import Navbar from "@/components/commonSections/Navbar";
 import '@/styles/globals.css';
-import Script from "next/script";
 import { Metadata } from 'next';
 import { getBootstrap, getDisplayLimit } from '@/lib/data';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
