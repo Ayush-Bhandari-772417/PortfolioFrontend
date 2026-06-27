@@ -12,9 +12,6 @@ export default function RecaptchaScript() {
     <Script
       src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
       strategy="lazyOnload"
-      onLoad={() => {
-        console.log('reCAPTCHA loaded');
-      }}
     />
   );
 }

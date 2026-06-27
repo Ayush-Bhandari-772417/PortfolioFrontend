@@ -40,8 +40,6 @@ export default async function ProjectsPage() {
   const regularLimit = getDisplayLimit(settings, 'portfolio', 'project', 12);
   const featuredProjects = projects.filter((p: Project) => p.featured).slice(0, featuredLimit);
   const regularProjects = projects.filter((p: Project) => !p.featured).slice(0, regularLimit);
-  console.log('Featured Projects:', featuredProjects.length);
-  console.log('Regular Projects:', regularProjects.length);
 
   return (
     <>

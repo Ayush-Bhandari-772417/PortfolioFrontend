@@ -1,16 +1,39 @@
 'use client';
 
-import { hasAnalyticsConsent } from '@/telemetry/core/consent';
+import Script from 'next/script';
 import { ANALYTICS_CONFIG } from '../config';
 
+/**
+ * Majestic Tracker
+ * - Injects Majestic backlink checker / site verification
+ * - Provides Trust Flow & Citation Flow widget components
+ * 
+ * Env: NEXT_PUBLIC_MAJESTIC_ID = Majestic API key / site verification
+ */
 export default function MajesticTracker() {
-  if (!hasAnalyticsConsent()) return null;
-  return null;
+  const majesticId = ANALYTICS_CONFIG.majesticId;
+
+  if (!majesticId) return null;
+
+  return (
+    <>
+      {/* Majestic verification meta */}
+      <meta key="majestic-meta" name="majestic-site-verification" content={majesticId} />
+
+      {/* Majestic backlink checker script */}
+      <Script
+        id="majestic-analytics"
+        src="https://majestic.com/static/js/analytics.js"
+        strategy="lazyOnload"
+        data-key={majesticId}
+      />
+    </>
+  );
 }
 
 /**
  * Majestic Trust Flow Badge
- * Links to Majestic site explorer showing Trust Flow showing Trust Flow
+ * Links to Majestic site explorer showing Trust Flow & Citation Flow
  */
 export function MajesticTrustFlowBadge({ domain }: { domain: string }) {
   return (

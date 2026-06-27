@@ -1,18 +1,34 @@
 'use client';
 
-import { hasAnalyticsConsent } from '@/telemetry/core/consent';
+import Script from 'next/script';
 import { ANALYTICS_CONFIG } from '../config';
 
 /**
  * Ahrefs Tracker
- * - The verification meta tag and analytics script are now injected
- *   server‑side via VerificationScripts.
- * - This component exists only to respect consent and to re‑export
- *   the UI badge components.
+ * - Injects Ahrefs Webmaster Tools verification + Site Audit widget
+ * - Also provides a Domain Rating widget component for displaying scores
+ * 
+ * Env: NEXT_PUBLIC_AHREFS_ID = Ahrefs verification token / site ID
  */
 export default function AhrefsTracker() {
-  if (!hasAnalyticsConsent()) return null;
-  return null;
+  const ahrefsId = ANALYTICS_CONFIG.ahrefsId;
+
+  if (!ahrefsId) return null;
+
+  return (
+    <>
+      {/* Ahrefs Site Verification Meta */}
+      <meta key="ahrefs-meta" name="ahrefs-site-verification" content={ahrefsId} />
+
+      {/* Ahrefs Analytics / Webmaster Tools Script */}
+      <Script
+        id="ahrefs-analytics"
+        src="https://analytics.ahrefs.com/analytics.js"
+        strategy="lazyOnload"
+        data-key={ahrefsId}
+      />
+    </>
+  );
 }
 
 /**
