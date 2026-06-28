@@ -315,7 +315,7 @@ const nextConfig = {
               "img-src 'self' data: https: blob:",
               "font-src 'self' https://fonts.gstatic.com data:",
               "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://www.clarity.ms https://scripts.clarity.ms https://static.hotjar.com https://www.google.com https://www.gstatic.com",
-              "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://www.clarity.ms https://i.clarity.ms https://t.clarity.ms https://static.hotjar.com https://www.hotjar.com https://www.google.com",
+              "connect-src 'self' https://www.google-analytics.com https://portfolio-backend-wpp5.onrender.com https://www.googletagmanager.com https://www.clarity.ms https://i.clarity.ms https://t.clarity.ms https://static.hotjar.com https://www.hotjar.com https://www.google.com",
               "frame-src 'self' https://www.google.com https://www.gstatic.com https://recaptcha.google.com https://www.youtube.com https://www.googletagmanager.com",
             ].join('; '),
           },

@@ -7,7 +7,7 @@ import { AllSettings } from '@/types';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 export default function ContactSection({ settings }: { settings: AllSettings }) {
-  const [formData, setFormData] = useState({ email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [scriptEnabled, setScriptEnabled] = useState(false);
@@ -50,6 +50,7 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: formData.name,
           email: formData.email,
           message: formData.message,
           token,
@@ -60,7 +61,7 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
 
       if (response.ok) {
         setStatus('success');
-        setFormData({ email: '', message: '' });
+        setFormData({ name: '', email: '', message: '' });
         resetToken();
         setTimeout(() => setStatus('idle'), 5000);
       } else {
@@ -182,6 +183,23 @@ export default function ContactSection({ settings }: { settings: AllSettings }) 
           <div className="animate-slideInRight">
             <div className="bg-white rounded-2xl p-8 shadow-2xl shadow-[#006494]/10 border border-[#00A6FB]/15">
               <div className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-bold text-slate-700 mb-2">
+                    Name *
+                  </label>
+                  <input
+                    type="name"
+                    id="name"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onFocus={handleFieldFocus}
+                    disabled={status === 'loading'}
+                    className="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:border-[#00A6FB] focus:ring-4 focus:ring-[#00A6FB]/15 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 placeholder-slate-400"
+                    placeholder="your@email.com"
+                    suppressHydrationWarning
+                  />
+                </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-bold text-slate-700 mb-2">
                     Email Address *
