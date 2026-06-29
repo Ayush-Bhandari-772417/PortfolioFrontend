@@ -5,8 +5,15 @@ import '@/styles/globals.css';
 import { Metadata } from 'next';
 import { getBootstrap, getDisplayLimit } from '@/lib/data';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
-import TelemetryProvider from '@/telemetry/react/TelemetryProvider';
-// Analytics and trackers are loaded after first paint via TelemetryProvider
+import TelemetryProvider from '@/telemetry/react/TelemetryProvider';// Analytics and trackers are loaded after first paint via TelemetryProvider
+import { Inter } from 'next/font/google';   // no npm install needed
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 const Footer = dynamic(
   () => import('@/components/commonSections/Footer'),
@@ -69,14 +76,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="google-site-verification" content={gscid} />
         <meta name="googlebot" content="index, follow" />
         <meta name="bingbot" content="index, follow" />
-        {/* Preconnect to key third-party origins to save connection time */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Load Inter with display=swap to avoid FOIT and reduce CLS */}
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
         {/* Verification scripts (e.g., Google Analytics) */}
       </head>
-      <body className="min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased">
+        <body className={`${inter.className} min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased`}>
         <TelemetryProvider />
         <Navbar settings={settings} />
         <main className="min-h-screen flex flex-col" role="main">{children}</main>
