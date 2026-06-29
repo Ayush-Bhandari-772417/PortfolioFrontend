@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\core\TelemetryKernel.ts
 'use client';
 
 import { vendorRegistry } from '../vendors/registry';

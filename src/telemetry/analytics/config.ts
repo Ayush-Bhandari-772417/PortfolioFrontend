@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\config.ts
 const isProduction = process.env.NODE_ENV === 'production';
 
 export const ANALYTICS_CONFIG = {

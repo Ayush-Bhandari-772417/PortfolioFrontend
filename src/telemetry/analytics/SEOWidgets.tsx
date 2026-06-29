@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\SEOWidgets.tsx
 'use client';
 
 /**

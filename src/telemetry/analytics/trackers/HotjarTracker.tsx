@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\trackers\HotjarTracker.tsx
 'use client';
 
 import Script from 'next/script';

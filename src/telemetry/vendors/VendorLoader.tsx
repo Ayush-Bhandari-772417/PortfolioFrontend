@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\vendors\VendorLoader.tsx
 "use client";
 
 import { useEffect, useState, type ComponentType } from 'react';

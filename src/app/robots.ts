@@ -1,3 +1,4 @@
+// frontend2\src\app\robots.ts
 import { MetadataRoute } from 'next';
 
 const DEFAULT_BASE_URL = 'http://localhost:3000';

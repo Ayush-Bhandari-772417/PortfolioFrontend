@@ -1,3 +1,4 @@
+// frontend2\src\components\HireModal.tsx
 'use client';
 
 import { useState, useCallback } from 'react';

@@ -1,3 +1,4 @@
+// frontend2\src\lib\analytics.ts
 'use client';
 import { ANALYTICS_CONFIG } from '@/telemetry/analytics/config';
 

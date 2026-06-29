@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\react\TelemetryProvider.tsx
 'use client';
 
 import VendorLoader from '@/telemetry/vendors/VendorLoader';

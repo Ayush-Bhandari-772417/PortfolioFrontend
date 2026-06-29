@@ -1,3 +1,4 @@
+// frontend2\src\app\not-found.tsx
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { Home, Search, ArrowLeft, Mail, FileQuestion } from 'lucide-react';
@@ -108,4 +109,3 @@ export default function NotFound() {
     </div>
   );
 }
-

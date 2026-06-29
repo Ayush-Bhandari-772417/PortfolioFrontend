@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\trackers\SemrushTracker.tsx
 'use client';
 
 import Script from 'next/script';

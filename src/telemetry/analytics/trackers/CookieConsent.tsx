@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\trackers\CookieConsent.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

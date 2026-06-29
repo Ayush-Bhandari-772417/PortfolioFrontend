@@ -1,4 +1,4 @@
-// frontend2/src/components/TableOfContents.tsx
+// frontend2\src\components\TableOfContents.tsx
 'use client';
 
 import { Book, ChevronRight, ChevronDown } from 'lucide-react';

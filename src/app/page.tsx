@@ -1,10 +1,5 @@
 // frontend2\src\app\page.tsx
-import {
-  Home,
-  Skills,
-  Services,
-  Contact
-} from '@/components/client/DynamicSections';
+import { Home, Skills, Services, Contact } from '@/components/client/DynamicSections';
 import About from '@/components/portfolioSections/About';
 import QualificationsSection from '@/components/portfolioSections/QualificationsSection';
 import Experience from '@/components/portfolioSections/ExperienceSection';
@@ -43,13 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const bootstrap = await getBootstrap();
-  const {
-    profile,
-    services,
-    skills,
-    experience,
-    qualifications,
-  } = bootstrap;
+  const { profile, services, skills, experience, qualifications, } = bootstrap;
 
   // 🔥 normalize settings here
   const settings = normalizeSettingsFromBootstrap(bootstrap);

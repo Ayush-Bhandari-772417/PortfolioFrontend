@@ -7,6 +7,7 @@ import { getBootstrap, getDisplayLimit } from '@/lib/data';
 import { normalizeSettingsFromBootstrap } from '@/lib/normalizeSettings';
 import TelemetryProvider from '@/telemetry/react/TelemetryProvider';// Analytics and trackers are loaded after first paint via TelemetryProvider
 import { Inter } from 'next/font/google';   // no npm install needed
+import CROTracker from '@/components/CROTracker'; // Import the CROTracker component
 
 const inter = Inter({
   subsets: ['latin'],
@@ -79,10 +80,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Verification scripts (e.g., Google Analytics) */}
       </head>
         <body className={`${inter.className} min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased`}>
-        <TelemetryProvider />
         <Navbar settings={settings} />
         <main className="min-h-screen flex flex-col" role="main">{children}</main>
         <Footer social_media={social_media.slice(0, getDisplayLimit(settings, 'home', 'social_media', 6))} settings={settings} />
+        <TelemetryProvider />
+        <CROTracker /> {/* Enable CRO tracking across all pages */}
       </body>
     </html>
   );

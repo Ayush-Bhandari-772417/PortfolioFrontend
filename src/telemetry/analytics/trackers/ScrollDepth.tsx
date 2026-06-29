@@ -1,4 +1,4 @@
-// frontend2\src\components\ScrollDepth.tsx
+// frontend2\src\telemetry\analytics\trackers\ScrollDepth.tsx
 'use client'
 
 import { useEffect, useRef } from 'react'

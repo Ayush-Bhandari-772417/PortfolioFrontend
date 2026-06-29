@@ -86,7 +86,7 @@ export default function ProjectDetailClient({ project, settings, relatedProjects
               <span className="text-sm sm:text-base">Back to projects</span>
             </Link>
 
-<div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 flex-wrap">
               <span className="sr-only">{siteName}</span>
               <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-white ${status.color} shadow-lg backdrop-blur-sm flex items-center gap-1.5`}>
                 <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4" />

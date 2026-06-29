@@ -1,3 +1,4 @@
+// frontend2\src\components\client\DynamicSections.tsx
 'use client';
 
 import dynamic from 'next/dynamic';

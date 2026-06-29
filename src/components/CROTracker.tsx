@@ -1,3 +1,4 @@
+// frontend2\src\components\CROTracker.tsx
 'use client';
 
 import { useCROTracking } from '@/hooks/useCROTracking';

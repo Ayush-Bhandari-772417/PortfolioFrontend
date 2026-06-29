@@ -1,3 +1,4 @@
+/* frontend2\src\styles\globals.css */
 /* Tailwind & Typography */
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";

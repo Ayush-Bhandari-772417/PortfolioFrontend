@@ -1,3 +1,4 @@
+// frontend2\src\components\cards\CreationRecommendationCard.tsx
 import { Creation } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';

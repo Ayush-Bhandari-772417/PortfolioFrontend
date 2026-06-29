@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\trackers\WebVitals.tsx
 'use client';
 import { onCLS, onFCP, onINP, onLCP, onTTFB, Metric } from 'web-vitals';
 import { useEffect } from 'react';

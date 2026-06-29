@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\analytics\trackers\MozTracker.tsx
 'use client';
 
 import Script from 'next/script';

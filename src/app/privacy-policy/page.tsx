@@ -1,4 +1,4 @@
-// src/app/privacy-policy/page.tsx
+// frontend2\src\app\privacy-policy\page.tsx
 import { Metadata } from 'next';
 import Link from 'next/link';
 

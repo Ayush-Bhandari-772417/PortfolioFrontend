@@ -1,3 +1,4 @@
+// frontend2\src\components\cards\ProjectCard.tsx
 import { ArrowRight, ExternalLink, Github, Star } from 'lucide-react';
 import { Project } from '@/types';
 import Image from 'next/image';

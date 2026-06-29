@@ -1,3 +1,4 @@
+// frontend2\src\telemetry\core\consent.ts
 export type ConsentLevel = 'none' | 'essential' | 'all';
 
 const KEY = 'portfolio_cookie_consent';

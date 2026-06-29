@@ -1,3 +1,4 @@
+// frontend2\src\hooks\useCROTracking.ts
 'use client';
 
 import { useEffect, useCallback, useRef } from 'react';
@@ -221,4 +222,3 @@ function setupDownloadTracking(goal: TrackedGoal) {
 
   document.addEventListener('click', handler);
 }
-

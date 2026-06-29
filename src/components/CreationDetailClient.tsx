@@ -39,8 +39,6 @@ export default function CreationDetailClient({
     article: 'from-[#003554] to-[#051923]',
   };
   
-
-
   const postedDate = creation.posted_date;
   const updatedDate = creation.updated_date;
 
@@ -187,7 +185,7 @@ export default function CreationDetailClient({
           
           {/* Right: Related Creations */}
           <aside className="lg:col-span-3">
-{displayedRelated.length > 0 && (
+            {displayedRelated.length > 0 && (
               <div className="lg:sticky lg:top-24 bg-white rounded-2xl p-6 shadow-lg shadow-[#006494]/10 border border-[#00A6FB]/15">
                 <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                   <Book className="w-5 h-5 text-[#006494]" />

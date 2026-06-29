@@ -1,4 +1,4 @@
-// frontend2\src\components\ExperienceCard.tsx
+// frontend2\src\components\cards\ExperienceCard.tsx
 'use client';
 
 import { useState } from 'react';
