@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useCallback, useRef } from 'react';
+import { apiFetch } from '@/lib/data';
 
 interface TrackedGoal {
   id: number;
@@ -102,7 +103,7 @@ export function useCROTracking() {
 
     configRef.current.sessionId = getSessionId();
 
-    fetch('/api/seo/public/goals/')
+    apiFetch('/api/seo/public/goals/')
       .then((res) => res.json())
       .then((goals: TrackedGoal[]) => {
         configRef.current.goals = goals;

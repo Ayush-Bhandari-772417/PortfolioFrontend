@@ -13,6 +13,7 @@ async function apiFetch(url: string) {
   if (!res.ok) throw new Error("Failed to load data from " + API + ": " + url);
   return res.json();
 }
+export { apiFetch };
 
 /* -------------------- 2. DRF results unwrapper -------------------- */
 function unwrap(data: any) {
