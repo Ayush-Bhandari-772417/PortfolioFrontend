@@ -103,7 +103,7 @@ export function useCROTracking() {
 
     configRef.current.sessionId = getSessionId();
 
-    apiFetch('/api/seo/public/goals/')
+    apiFetch('/seo/goals/')
       .then((res) => res.json())
       .then((goals: TrackedGoal[]) => {
         configRef.current.goals = goals;
