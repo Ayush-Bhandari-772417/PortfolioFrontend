@@ -70,7 +70,7 @@ function processFigures(root: HTMLElement) {
     }
 
     // ✅ Rebuild uploaded image URL if relative
-    if (!src.startsWith("http")) {
+    if (!src.startsWith("https")) {
       src = SUPABASE_BASE + src;
     }
 

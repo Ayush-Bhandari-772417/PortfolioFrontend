@@ -1,19 +1,125 @@
-// frontend2\src\app\robots.ts
-import { MetadataRoute } from 'next';
+// frontend2/src/app/robots.ts
 
-const DEFAULT_BASE_URL = 'http://localhost:3000';
-export const dynamic = 'force-static';
+import { MetadataRoute } from "next";
+import { getBootstrap } from "@/lib/data";
+import { normalizeSettingsFromBootstrap } from "@/lib/normalizeSettings";
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+const DEFAULT_BASE_URL = "https://www.bhandariayush.com.np";
+
+/**
+ * Robots.txt only supports prefix matching.
+ *
+ * Therefore, only page types whose crawl behaviour can be expressed
+ * safely are mapped here.
+ *
+ * Supported:
+ *   ✓ project_detail
+ *   ✓ creation_detail
+ *
+ * Intentionally NOT supported (Policy A):
+ *   ✗ home
+ *   ✗ projects
+ *   ✗ creations
+ *   ✗ creations_type
+ *
+ * Those page types should use meta robots (index/follow)
+ * instead of robots.txt.
+ */
+const DISALLOW_PATHS: Record<string, string[]> = {
+  /**
+   * Matches:
+   *   /projects/my-project
+   *
+   * Does NOT match:
+   *   /projects
+   */
+  project_detail: ["/projects/"],
+
+  /**
+   * Matches:
+   *   /creations/blog/post
+   *   /creations/story/post
+   *   /creations/article/post
+   *   /creations/poem/post
+   *
+   * Does NOT match:
+   *   /creations/blog
+   *   /creations/story
+   *   /creations/article
+   *   /creations/poem
+   */
+  creation_detail: [
+    "/creations/blog/",
+    "/creations/story/",
+    "/creations/article/",
+    "/creations/poem/",
+  ],
+};
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_BASE_URL;
+
+  const disallow = new Set<string>();
+
+  /**
+   * Always keep admin private.
+   */
+  disallow.add("/admin/");
+
+  try {
+    const bootstrap = await getBootstrap();
+    const settings = normalizeSettingsFromBootstrap(bootstrap);
+
+    /**
+     * Global kill switch.
+     *
+     * If disabled, block crawling of the entire site.
+     */
+    if (settings.settings.allow_indexing === false) {
+      return {
+        rules: {
+          userAgent: "*",
+          disallow: "/",
+        },
+      };
+    }
+
+    /**
+     * Apply crawl rules only for page types that can
+     * be represented correctly by robots.txt.
+     */
+    for (const [page, seo] of Object.entries(settings.seo)) {
+      if (seo.crawl !== false) continue;
+
+      const paths = DISALLOW_PATHS[page];
+
+      /**
+       * Policy A:
+       *
+       * Ignore page types that cannot be expressed
+       * accurately by robots.txt.
+       */
+      if (!paths) continue;
+
+      paths.forEach((path) => disallow.add(path));
+    }
+  } catch (error) {
+    console.error(
+      "robots.ts: failed to build dynamic robots.txt",
+      error
+    );
+  }
 
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/admin/'],
+      userAgent: "*",
+      allow: "/",
+      disallow: [...disallow],
     },
+
     sitemap: `${baseUrl}/sitemap.xml`,
+
     host: new URL(baseUrl).host,
   };
 }

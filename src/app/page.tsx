@@ -67,6 +67,44 @@ export default async function HomePage() {
         }}
       />
 
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(){
+            const nodes = ${JSON.stringify([
+              homePageJsonLd(profile, settings),
+              websiteJsonLd(),
+              breadcrumbsJsonLd([]),
+            ].filter(Boolean))};
+            const pagePath = '/';
+            const backendBase = window.__BACKEND_BASE_URL__;
+            if (!backendBase || !nodes || !nodes.length) return;
+          
+            const postNode = async (node) => {
+              const schemaType = node && (node['@type'] || node['@context'] || 'Unknown');
+              const schema_type = Array.isArray(schemaType) ? schemaType[0] : schemaType;
+          
+              try {
+                await fetch(backendBase + '/seo/public/schemas/ingest-node/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    page_path: pagePath,
+                    schema_type,
+                    json: node,
+                    validate: true
+                  }),
+                  keepalive: true,
+                });
+              } catch(e) {}
+            };
+          
+            nodes.forEach(postNode);
+          })();
+          `,
+        }}
+      />
+
       <main className="min-h-screen">
         <Home profile={profile} settings={settings} />
         <About profile={profile} settings={settings} />

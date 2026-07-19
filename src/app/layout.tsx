@@ -29,7 +29,7 @@ const Footer = dynamic(
   }
 );
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://localhost:3000';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -70,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { social_media, } = bootstrap;
 
   const gscid = process.env.NEXT_PUBLIC_GSC_VERIFICATION;
+  const ahrefsid = process.env.NEXT_PUBLIC_AHREFS_VERIFICATION;
 
   return (
     <html lang="en">
@@ -77,9 +78,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="google-site-verification" content={gscid} />
         <meta name="googlebot" content="index, follow" />
         <meta name="bingbot" content="index, follow" />
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key={ahrefsid} async></script>
         {/* Verification scripts (e.g., Google Analytics) */}
       </head>
         <body className={`${inter.className} min-h-screen bg-gradient-to-br from-navy-950 via-ocean-950 to-slate-900 text-slate-100 antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.__BACKEND_BASE_URL__ = ${JSON.stringify(process.env.NEXT_PUBLIC_BACKEND_BASE_URL || '')};`,
+          }}
+        />
         <Navbar settings={settings} />
         <main className="min-h-screen flex flex-col" role="main">{children}</main>
         <Footer social_media={social_media.slice(0, getDisplayLimit(settings, 'home', 'social_media', 6))} settings={settings} />

@@ -1,6 +1,6 @@
-// frontend2\src\app\sitemap-html\page.tsx
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { buildSitemapData } from '@/lib/sitemapData';
 
 export const metadata: Metadata = {
   title: 'HTML Sitemap',
@@ -13,46 +13,92 @@ interface SitemapSection {
   links: { label: string; href: string; description?: string }[];
 }
 
-const sitemapData: SitemapSection[] = [
-  {
-    title: 'Main Pages',
-    links: [
-      { label: 'Home', href: '/', description: 'Portfolio homepage' },
-      { label: 'Projects', href: '/projects', description: 'All development projects' },
-      { label: 'Creations', href: '/creations', description: 'Blog posts, poems, stories, articles' },
-      { label: 'Hire Me', href: '/hire', description: 'Contact for freelance work' },
-    ],
-  },
-  {
-    title: 'Projects',
-    links: [
-      { label: 'All Projects', href: '/projects' },
-      { label: 'Web Applications', href: '/projects?type=web_app' },
-      { label: 'Mobile Apps', href: '/projects?type=mobile_app' },
-      { label: 'Open Source', href: '/projects?type=open_source' },
-    ],
-  },
-  {
-    title: 'Creations',
-    links: [
-      { label: 'All Creations', href: '/creations' },
-      { label: 'Blogs', href: '/creations/blog' },
-      { label: 'Poems', href: '/creations/poem' },
-      { label: 'Stories', href: '/creations/story' },
-      { label: 'Articles', href: '/creations/article' },
-    ],
-  },
-  {
-    title: 'SEO & Insights',
-    links: [
-      { label: 'XML Sitemap', href: '/sitemap.xml', description: 'Machine-readable sitemap' },
-      { label: 'Robots.txt', href: '/robots.txt', description: 'Crawler instructions' },
-      { label: 'HTML Sitemap', href: '/sitemap-html', description: 'Human-readable sitemap (this page)' },
-    ],
-  },
-];
+export default async function SitemapHtmlPage() {
+  const {
+    staticPages,
+    projectPages,
+    creationTypePages,
+    creationDetailPages,
+  } = await buildSitemapData();
 
-export default function SitemapHtmlPage() {
+  // Helper to find a static page by path
+  const findStaticPageByPath = (path: string) => {
+    return staticPages.find(page => page.path === path);
+  };
+
+  // Build the sitemap data for the HTML sitemap
+  const sitemapData: SitemapSection[] = [
+    {
+      title: 'Main Pages',
+      links: [
+        // Home
+        {
+          ...(findStaticPageByPath('/') ?? {
+            label: 'Home',
+            href: '/',
+            description: 'Portfolio homepage',
+          }),
+        },
+        // Projects
+        {
+          ...(findStaticPageByPath('/projects') ?? {
+            label: 'Projects',
+            href: '/projects',
+            description: 'All development projects',
+          }),
+        },
+        // Creations
+        {
+          ...(findStaticPageByPath('/creations') ?? {
+            label: 'Creations',
+            href: '/creations',
+            description: 'Blog posts, poems, stories, articles',
+          }),
+        },
+        // Note: Hire Me page is not available in the current routing, so we skip it.
+      ].map((page) => ({
+        label: page.label,
+        href: page.href,
+        description: page.description,
+      })),
+    },
+    {
+      title: 'Projects',
+      links: [
+        {
+          label: 'All Projects',
+          href: '/projects',
+          description: 'All development projects',
+        },
+        // We don't have categorical project pages (e.g., Web Applications, Mobile Apps) in the data.
+        // If you want to add them, you would need to extend the backend and the sitemap settings.
+      ],
+    },
+    {
+      title: 'Creations',
+      links: [
+        {
+          label: 'All Creations',
+          href: '/creations',
+          description: 'All blog posts, poems, stories, articles',
+        },
+        ...creationTypePages.map((typePage) => ({
+          label: typePage.label,
+          href: `/creations/${typePage.type}`,
+          description: typePage.description,
+        })),
+      ],
+    },
+    {
+      title: 'SEO & Insights',
+      links: [
+        { label: 'XML Sitemap', href: '/sitemap.xml', description: 'Machine-readable sitemap' },
+        { label: 'Robots.txt', href: '/robots.txt', description: 'Crawler instructions' },
+        { label: 'HTML Sitemap', href: '/sitemap-html', description: 'Human-readable sitemap (this page)' },
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="container mx-auto px-4 sm:px-6 py-12 max-w-4xl">
@@ -70,10 +116,10 @@ export default function SitemapHtmlPage() {
         {/* Last Updated */}
         <div className="text-center mb-8">
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-sm text-slate-500 shadow-sm border border-slate-200">
-            Last updated: {new Date().toLocaleDateString('en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            Last updated: {new Date().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             })}
           </span>
         </div>
@@ -81,7 +127,7 @@ export default function SitemapHtmlPage() {
         {/* Sitemap Sections */}
         <div className="space-y-8">
           {sitemapData.map((section) => (
-            <section 
+            <section
               key={section.title}
               className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-slate-200"
             >
@@ -97,11 +143,11 @@ export default function SitemapHtmlPage() {
                       className="group block p-4 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 border border-transparent hover:border-blue-200 transition-all"
                     >
                       <span className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {link.label}
+                        {label}
                       </span>
                       {link.description && (
                         <p className="text-sm text-slate-500 mt-1">
-                          {link.description}
+                          {description}
                         </p>
                       )}
                     </Link>

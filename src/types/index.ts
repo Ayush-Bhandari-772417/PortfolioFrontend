@@ -159,37 +159,56 @@ export interface Service {
 }
 
 export interface Setting {
+  is_public: boolean;
+  uploaded_ip: string;
+  uploaded_by: string;
+  created_at: string;
+  updated_at: string;
   id: number;
-  type: 'text' | 'textarea' | 'boolean' | 'number' | 'color';
+  group: string;
+  type: string ;
   key: string;
   value: string;
   description: string | null;
-  is_public: boolean;
 }
 
 export interface SEOPageSetting {
+  is_public: boolean;
+  uploaded_ip: string;
+  uploaded_by: string;
+  created_at: string;
+  updated_at: string;
   id: number;
   page: string;
+  crawl: boolean;
   index: boolean;
   follow: boolean;
-  is_public: boolean;
+  robots_override: string | null;
 }
 
 export interface SitemapSetting {
+  is_public: boolean;
+  uploaded_ip: string;
+  uploaded_by: string;
+  created_at: string;
+  updated_at: string;
   id: number;
   page: string;
   include: boolean;
   priority: number;
   changefreq: string;
-  is_public: boolean;
 }
 
 export interface DisplaySetting {
-  id: number;
-  context: string;
-  item_type: string;
-  limit: number;
   is_public: boolean;
+  uploaded_ip: string;
+  uploaded_by: string;
+  created_at: string;
+  updated_at: string;
+  id: number;
+  location: string;
+  item_type: string;
+  display_limit: number;
 }
 
 export interface AllSettings {

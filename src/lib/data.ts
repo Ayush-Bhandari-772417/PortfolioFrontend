@@ -61,8 +61,8 @@ export const getCreationBySlug = cache(async (slug: string, type?: string) => {
 });
 
 // Helper functions
-export function getDisplayLimit(settings: AllSettings, context: string, itemType: string, defaultLimit: number = 6): number {
-  return settings.display[context]?.[itemType]?.limit || defaultLimit;
+export function getDisplayLimit(settings: AllSettings, location: string, itemType: string, defaultLimit: number = 6): number {
+  return settings.display[location]?.[itemType]?.display_limit || defaultLimit;
 }
 
 export function formatDate(dateString: string): string {

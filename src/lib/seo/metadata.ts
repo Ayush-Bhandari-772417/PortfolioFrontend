@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { AllSettings } from "@/types";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://localhost:3000';
 
 type Props = {
   settings: AllSettings;

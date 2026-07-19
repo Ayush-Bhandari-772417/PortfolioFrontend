@@ -18,7 +18,6 @@ export function homePageJsonLd(profile: any, settings: any) {
   };
 }
 
-// speakable embedded inside Article/BlogPosting — not a sibling
 export function creationDetailJsonLd(creation: any) {
   return {
     "@type": creation.type === "blog" ? "BlogPosting" : "Article",
@@ -34,14 +33,9 @@ export function creationDetailJsonLd(creation: any) {
       "@id": `${baseUrl}${creation.path}`,
     },
     author: { "@type": "Person", name: creation.author },
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".summary", ".intro"],
-    },
   };
 }
 
-// speakable embedded inside CreativeWork
 export function projectDetailJsonLd(project: any) {
   return {
     "@type": "CreativeWork",
@@ -59,51 +53,32 @@ export function projectDetailJsonLd(project: any) {
       "@type": "Person",
       name: "Ayush Bhandari",
     },
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".summary", ".intro"],
-    },
   };
 }
 
-// speakable embedded inside CollectionPage
 export function projectListJsonLd() {
   return {
     "@type": "CollectionPage",
     name: "Projects Portfolio",
     description: "Collection of web development projects and applications",
     url: `${baseUrl}/projects`,
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".summary", ".intro"],
-    },
   };
 }
 
-// speakable embedded inside CollectionPage
 export function creationTypeJsonLd(data: any, type: string) {
   return {
     "@type": "CollectionPage",
     name: data.label,
     description: `Collection of ${data.label.toLowerCase()}`,
     url: `${baseUrl}/creations/${type}`,
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".summary", ".intro"],
-    },
   };
 }
 
-// speakable embedded inside CollectionPage
 export function creationListJsonLd() {
   return {
     "@type": "CollectionPage",
     name: "Creative Writings",
     description: "Collection of blog posts, poems, stories, and articles",
     url: `${baseUrl}/creations`,
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".summary", ".intro"],
-    },
   };
 }
