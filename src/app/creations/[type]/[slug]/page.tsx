@@ -82,7 +82,7 @@ export async function generateMetadata({
 
   return buildMetadata({
     settings: settings,
-    page: "creation-detail-page",
+    page: "creation_detail",
     title: `${creation?.title} | ${settings.settings.site_name || 'Portfolio'}`,
     description: creation?.excerpt || settings.settings.site_description || '',
     path: `/creations/${creation?.type}/${creation?.slug}`,

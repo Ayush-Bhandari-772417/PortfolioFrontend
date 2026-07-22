@@ -11,7 +11,8 @@ export default function Navbar({ settings }: { settings: AllSettings }) {
     { href: '/#contact', label: 'Contact' },
   ];
 
-  const logoUrl = settings.settings.named_logo_url || '/logo.png';
+  // Ensure logoUrl is a string (some Setting types may be objects)
+  const logoUrl = String(settings.settings.named_logo_url ?? '/logo.png');
 
   return (
     <NavbarClient

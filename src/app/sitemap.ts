@@ -1,3 +1,4 @@
+// frontend2\src\app\sitemap.ts
 import { MetadataRoute } from "next";
 import { buildSitemapData } from "@/lib/sitemapData";
 
@@ -9,7 +10,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     creationDetailPages,
   } = await buildSitemapData();
 
-  const urls: MetadataRoute.SitemapItem[] = [];
+  type SitemapItem = MetadataRoute.Sitemap[number];
+  const urls: SitemapItem[] = [];
 
   /**
    * Helper to add a URL to the sitemap, avoiding duplicates.
@@ -19,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     path: string,
     options?: {
       priority?: number;
-      changeFrequency?: MetadataRoute.SitemapItem["changeFrequency"];
+      changeFrequency?: SitemapItem["changeFrequency"];
       lastModified?: Date | string;
     }
   ) => {
@@ -33,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const page of staticPages) {
     addUrl(page.path, {
       priority: page.priority,
-      changeFrequency: page.changeFrequency,
+      changeFrequency: page.changeFrequency as SitemapItem["changeFrequency"],
       lastModified: page.lastModified,
     });
   }
@@ -42,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const project of projectPages) {
     addUrl(`/projects/${project.slug}`, {
       priority: project.priority,
-      changeFrequency: project.changeFrequency,
+      changeFrequency: project.changeFrequency as SitemapItem["changeFrequency"],
       lastModified: project.lastModified,
     });
   }
@@ -51,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const typePage of creationTypePages) {
     addUrl(`/creations/${typePage.type}`, {
       priority: typePage.priority,
-      changeFrequency: typePage.changeFrequency,
+      changeFrequency: typePage.changeFrequency as SitemapItem["changeFrequency"],
     });
   }
 
@@ -59,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const creation of creationDetailPages) {
     addUrl(`/creations/${creation.type}/${creation.slug}`, {
       priority: creation.priority,
-      changeFrequency: creation.changeFrequency,
+      changeFrequency: creation.changeFrequency as SitemapItem["changeFrequency"],
       lastModified: creation.lastModified,
     });
   }

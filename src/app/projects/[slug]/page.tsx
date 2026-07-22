@@ -30,7 +30,7 @@ export async function generateMetadata(
 
   return buildMetadata({
     settings: settings,
-    page: "creation-detail-page",
+    page: "project_detail",
     title: `${project.title} | ${settings.settings.site_name || 'Portfolio'}`,
     description: project.excerpt || project.abstract,
     path: `/projects/${project.slug}`,

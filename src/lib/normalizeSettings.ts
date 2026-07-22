@@ -15,8 +15,9 @@ export function normalizeSettingsFromBootstrap( bootstrap: any ): AllSettings {
     ? bootstrap.sitemap
     : [];
 
-  const rawDisplay: Record<string, Record<string, DisplaySetting>> =
-    bootstrap.display || {};
+  const rawDisplay: DisplaySetting[] = Array.isArray(bootstrap.display)
+    ? bootstrap.display
+    : [];
 
   // ---- SETTINGS MAP ----
   const settingsMap: Record<string, any> = {};
@@ -56,10 +57,18 @@ export function normalizeSettingsFromBootstrap( bootstrap: any ): AllSettings {
     }
   });
 
+  // ---- DISPLAY MAP ----
+  const displayMap: Record<string, DisplaySetting> = {};
+  rawDisplay.forEach((display: DisplaySetting) => {
+    if (!display.is_public) return;
+    const displayKey = `${display.location}:${display.item_type}`;
+    displayMap[displayKey] = display;
+  });
+
   return {
     settings: settingsMap,
     seo: seoMap,
     sitemap: sitemapMap,
-    display: rawDisplay,
+    display: displayMap,
   };
 }

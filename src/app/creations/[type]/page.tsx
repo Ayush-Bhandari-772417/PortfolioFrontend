@@ -44,7 +44,7 @@ export async function generateMetadata({
 
   return buildMetadata({
     settings: settings,
-    page: "creation-detail-page",
+    page: "creations_type",
     title: `${config.label} - Creations`,
     description: `Explore my ${config.label.toLowerCase()} - creative writings and insights.`,
     path: `/creations/${type}`,

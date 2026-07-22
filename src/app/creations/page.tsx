@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return buildMetadata({
     settings: settings,
-    page: "creation-list-page",
+    page: "creations",
     title: settings.settings.creations_page_title || 'Creations',
     description: settings.settings.creations_page_description || 
     'Explore my creative writings including blog posts, poems, stories, and articles.',

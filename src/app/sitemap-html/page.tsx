@@ -16,9 +16,7 @@ interface SitemapSection {
 export default async function SitemapHtmlPage() {
   const {
     staticPages,
-    projectPages,
     creationTypePages,
-    creationDetailPages,
   } = await buildSitemapData();
 
   // Helper to find a static page by path
@@ -26,41 +24,43 @@ export default async function SitemapHtmlPage() {
     return staticPages.find(page => page.path === path);
   };
 
+  const getStaticPageLink = (
+    path: string,
+    fallback: { label: string; href: string; description: string }
+  ) => {
+    const page = findStaticPageByPath(path);
+    return page
+      ? { label: page.label, href: page.path, description: page.description }
+      : fallback;
+  };
+
   // Build the sitemap data for the HTML sitemap
   const sitemapData: SitemapSection[] = [
     {
       title: 'Main Pages',
       links: [
-        // Home
-        {
-          ...(findStaticPageByPath('/') ?? {
-            label: 'Home',
-            href: '/',
-            description: 'Portfolio homepage',
-          }),
-        },
-        // Projects
-        {
-          ...(findStaticPageByPath('/projects') ?? {
-            label: 'Projects',
-            href: '/projects',
-            description: 'All development projects',
-          }),
-        },
-        // Creations
-        {
-          ...(findStaticPageByPath('/creations') ?? {
-            label: 'Creations',
-            href: '/creations',
-            description: 'Blog posts, poems, stories, articles',
-          }),
-        },
+        getStaticPageLink('/', {
+          label: 'Home',
+          href: '/',
+          description: 'Portfolio homepage',
+        }),
+        getStaticPageLink('/projects', {
+          label: 'Projects',
+          href: '/projects',
+          description: 'All development projects',
+        }),
+        getStaticPageLink('/creations', {
+          label: 'Creations',
+          href: '/creations',
+          description: 'Blog posts, poems, stories, articles',
+        }),
+        getStaticPageLink('/privacy-policy', {
+          label: 'Privacy Policy',
+          href: '/privacy-policy',
+          description: 'Privacy policy for the website',
+        }),
         // Note: Hire Me page is not available in the current routing, so we skip it.
-      ].map((page) => ({
-        label: page.label,
-        href: page.href,
-        description: page.description,
-      })),
+      ],
     },
     {
       title: 'Projects',
@@ -143,11 +143,11 @@ export default async function SitemapHtmlPage() {
                       className="group block p-4 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 border border-transparent hover:border-blue-200 transition-all"
                     >
                       <span className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {label}
+                        {link.label}
                       </span>
                       {link.description && (
                         <p className="text-sm text-slate-500 mt-1">
-                          {description}
+                          {link.description}
                         </p>
                       )}
                     </Link>

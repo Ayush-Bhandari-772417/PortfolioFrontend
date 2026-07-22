@@ -19,9 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return buildMetadata({
     settings: settings,
-    page: "creation-list-page",
+    page: "projects",
     title: settings.settings.projects_page_title || 'Projects',
-    description: settings.settings.projects_page_description || 
+    description: settings.settings.projects_page_description ||
     'Explore my portfolio of web development projects, applications, and technical solutions.',
     path: `/projects`,
     image: settings.settings.projects_og_image || '/logo.png',

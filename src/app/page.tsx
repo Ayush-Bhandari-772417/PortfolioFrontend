@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return buildMetadata({
     settings: settings,
-    page: "homepage",
+    page: "home",
     title: settings.settings.home_page_title,
     description: settings.settings.home_page_description,
     path: "/",

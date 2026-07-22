@@ -102,7 +102,28 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
        */
       if (!paths) continue;
 
-      paths.forEach((path) => disallow.add(path));
+      // Process robots_override for noindex directives
+      let shouldDisallowDueToOverride = false;
+      if (seo.robots_override) {
+        const directives = seo.robots_override
+          .split(',')
+          .map(d => d.trim().toLowerCase())
+          .filter(d => d.length > 0);
+
+        // Check for directives that indicate content should not be indexed
+        const noIndexIndicators = directives.some(d =>
+          ['noindex', 'none'].includes(d)
+        );
+
+        if (noIndexIndicators) {
+          shouldDisallowDueToOverride = true;
+        }
+      }
+
+      // Add paths to disallow if either crawl is false OR robots_override indicates noindex
+      if (seo.crawl !== false || shouldDisallowDueToOverride) {
+        paths.forEach((path) => disallow.add(path));
+      }
     }
   } catch (error) {
     console.error(

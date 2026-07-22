@@ -51,7 +51,7 @@ export default function NavbarClient({ navLinks, logoUrl }: { navLinks: { href: 
                 alt="Logo"
                 width={250}
                 height={50}
-                className="object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-2xl"
+                className="w-auto h-[70px] object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-2xl"
                 priority
               />
             </div>
