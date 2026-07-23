@@ -203,6 +203,18 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
+const ALLOWED_HOSTS =
+  (process.env.NEXT_PUBLIC_ANALYTICS_HOST ?? "")
+    .split(",")
+    .map(h => h.trim())
+    .filter(Boolean);
+
+function analyticsEnabled() {
+  if (typeof window === "undefined") return false;
+
+  return ALLOWED_HOSTS.includes(window.location.hostname);
+}
+
 interface CROPayload {
   goal_id?: number;
   event_type:
@@ -222,6 +234,7 @@ interface CROPayload {
   referrer: string;
   metadata?: Record<string, unknown>;
   user_agent: string;
+  hostname: string;
 }
 
 const SESSION_KEY = 'cro_session_id';
@@ -248,11 +261,15 @@ function getSessionId(): string {
 function sendEvent(
   payload: { event_type: CROPayload["event_type"] } & Partial<CROPayload>
 ) {
+  if (!analyticsEnabled()) {
+    return;
+  }
   if (typeof window === "undefined") {
     return;
   }
 
   const event: CROPayload = {
+    hostname: window.location.hostname,
     goal_id: payload.goal_id,
     event_type: payload.event_type,
     event_name: payload.event_name ?? "",

@@ -212,10 +212,10 @@ export interface DisplaySetting {
 }
 
 export interface AllSettings {
-  settings: Record<string, Setting>;
+  settings: Record<string, any>;
   seo: Record<string, SEOPageSetting>;
   sitemap: Record<string, SitemapSetting>;
-  display: Record<string, DisplaySetting>;
+  display: Record<string, Record<string, DisplaySetting>>;
 }
 
 export interface SubSkill {

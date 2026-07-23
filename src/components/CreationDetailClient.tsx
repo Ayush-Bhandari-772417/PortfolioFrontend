@@ -43,7 +43,7 @@ export default function CreationDetailClient({
   const updatedDate = creation.updated_date;
 
   // Get related creations limit from settings
-  const relatedLimit = settings.display?.detail?.[creation.type]?.limit || 3;
+  const relatedLimit = settings.display?.detail?.[creation.type]?.display_limit || 3;
   const displayedRelated = relatedCreations.slice(0, relatedLimit);
 
   // Handle headings extracted from ContentProcessor
