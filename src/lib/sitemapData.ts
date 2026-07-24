@@ -278,12 +278,6 @@ export const buildSitemapData = cache(async () => {
       // Record exists and include=true - use DB values
       const creations = await getCreations();
       for (const creation of creations) {
-        // Only process public creations (assuming the API already filters? but we check again)
-        if (!creation.is_public) continue;
-
-        const config = creationTypeConfigs[creation.type as 'blog' | 'poem' | 'story' | 'article'];
-        if (!config) continue;
-
         creationDetailPages.push({
           type: creation.type as 'blog' | 'poem' | 'story' | 'article',
           slug: creation.slug,
@@ -302,12 +296,6 @@ export const buildSitemapData = cache(async () => {
     // Record does NOT exist in DB - use fallback values
     const creations = await getCreations();
     for (const creation of creations) {
-      // Only process public creations (assuming the API already filters? but we check again)
-      if (!creation.is_public) continue;
-
-      const config = creationTypeConfigs[creation.type as 'blog' | 'poem' | 'story' | 'article'];
-      if (!config) continue;
-
       creationDetailPages.push({
         type: creation.type as 'blog' | 'poem' | 'story' | 'article',
         slug: creation.slug,
